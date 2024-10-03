@@ -2616,6 +2616,8 @@ checksum = "799f082a41784b8d1b7f767ccd142b6f48d3c8338b98a6960bc46f3c4dd2c2e6"
 [[package]]
 name = "pinocchio"
 version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "087bd14844ee3f8d3b6bfd516c6ede3e76df018bb4879768978ba9648440b15b"
 
 [[package]]
 name = "pinocchio-pubkey"
