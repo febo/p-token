@@ -9,7 +9,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/febo/pinocchio/actions/workflows/main.yml"><img src="https://img.shields.io/github/actions/workflow/status/febo/pinocchio/main.yml?logo=GitHub" /></a>
+  <a href="https://github.com/febo/p-token/actions/workflows/main.yml"><img src="https://img.shields.io/github/actions/workflow/status/febo/p-token/main.yml?logo=GitHub" /></a>
 </p>
 
 ## Overview
