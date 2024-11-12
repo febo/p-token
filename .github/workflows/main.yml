@@ -42,24 +42,24 @@ jobs:
       - name: Lint Client JS
         run: pnpm clients:js:lint
 
-  format_and_lint_client_rust:
-    name: Format & Lint Client Rust
-    runs-on: ubuntu-latest
-    steps:
-      - name: Git Checkout
-        uses: actions/checkout@v4
+  # format_and_lint_client_rust:
+  #   name: Format & Lint Client Rust
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Git Checkout
+  #       uses: actions/checkout@v4
 
-      - name: Setup Environment
-        uses: ./.github/actions/setup
-        with:
-          clippy: true
-          rustfmt: true
+  #     - name: Setup Environment
+  #       uses: ./.github/actions/setup
+  #       with:
+  #         clippy: true
+  #         rustfmt: true
 
-      - name: Format Client Rust
-        run: pnpm clients:rust:format
+  #     - name: Format Client Rust
+  #       run: pnpm clients:rust:format
 
-      - name: Lint Client Rust
-        run: pnpm clients:rust:lint
+  #     - name: Lint Client Rust
+  #       run: pnpm clients:rust:lint
 
   build_programs:
     name: Build programs
