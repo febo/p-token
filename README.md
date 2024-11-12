@@ -18,33 +18,33 @@ This repository contains a **proof-of-concept** of a reimplementation of the SPL
 
 ## Status
 
-| Instruction                | Completed | CU  | CU (SPL Token) |
-|----------------------------|-----------|-----|----------------|
-| `InitializeMint`           | ✅        | 396 | 2967           |
-| `InitializeAccount`        | ✅        | 444 | 4527           |
-| `InitializeMultisig`       |           |     |                |
-| `Transfer`                 | ✅        | 161 | 4645           |
-| `Approve`                  |           |     |                |
-| `Revoke`                   |           |     |                |
-| `SetAuthority`             |           |     |                |
-| `MintTo`                   | ✅        | 160 | 4538           |
-| `Burn`                     |           |     |                |
-| `CloseAccount`             |           |     |                |
-| `FreezeAccount`            |           |     |                |
-| `ThawAccount`              |           |     |                |
-| `TransferChecked`          |           |     |                |
-| `ApproveChecked`           |           |     |                |
-| `MintToChecked`            |           |     |                |
-| `BurnChecked`              |           |     |                |
-| `InitializeAccount2`       |           |     |                |
-| `SyncNative`               |           |     |                |
-| `InitializeAccount3`       |           |     |                |
-| `InitializeMultisig2`      |           |     |                |
-| `InitializeMint2`          |           |     |                |
-| `GetAccountDataSize`       |           |     |                |
-| `InitializeImmutableOwner` |           |     |                |
-| `AmountToUiAmount`         |           |     |                |
-| `UiAmountToAmount`         |           |     |                |
+| Instruction                | Completed | CU (`p-token`) | CU (`spl-token`) |
+|----------------------------|-----------|----------------|------------------|
+| `InitializeMint`           | ✅        | 396            | 2967             |
+| `InitializeAccount`        | ✅        | 444            | 4527             |
+| `InitializeMultisig`       |           |                |                  |
+| `Transfer`                 | ✅        | 161            | 4645             |
+| `Approve`                  |           |                |                  |
+| `Revoke`                   |           |                |                  |
+| `SetAuthority`             |           |                |                  |
+| `MintTo`                   | ✅        | 160            | 4538             |
+| `Burn`                     |           |                |                  |
+| `CloseAccount`             |           |                |                  |
+| `FreezeAccount`            |           |                |                  |
+| `ThawAccount`              |           |                |                  |
+| `TransferChecked`          |           |                |                  |
+| `ApproveChecked`           |           |                |                  |
+| `MintToChecked`            |           |                |                  |
+| `BurnChecked`              |           |                |                  |
+| `InitializeAccount2`       |           |                |                  |
+| `SyncNative`               |           |                |                  |
+| `InitializeAccount3`       |           |                |                  |
+| `InitializeMultisig2`      |           |                |                  |
+| `InitializeMint2`          |           |                |                  |
+| `GetAccountDataSize`       |           |                |                  |
+| `InitializeImmutableOwner` |           |                |                  |
+| `AmountToUiAmount`         |           |                |                  |
+| `UiAmountToAmount`         |           |                |                  |
 
 > Tests were run using Solana `v2.1.0`.
 
