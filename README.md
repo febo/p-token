@@ -4,7 +4,7 @@ A `pinocchio`-based Token program.
 
 ## Overview
 
-This repository contains a proof-of-concept of a reimplementation of the SPL Token program, one of the most used programs on Solana, using `pinocchio`. The purpose is to have an implementation that optimizes the compute units, while being fully compatible with the original implementation &mdash; i.e., support the exact same instruction and account layouts as SPL Token, byte for byte.
+This repository contains a **proof-of-concept** of a reimplementation of the SPL Token program, one of the most used programs on Solana, using `pinocchio`. The purpose is to have an implementation that optimizes the compute units, while being fully compatible with the original implementation &mdash; i.e., support the exact same instruction and account layouts as SPL Token, byte for byte.
 
 ## Status
 
@@ -36,7 +36,7 @@ This repository contains a proof-of-concept of a reimplementation of the SPL Tok
 | `AmountToUiAmount`         |           |     |                |
 | `UiAmountToAmount`         |           |     |                |
 
-> Test were run using Solana `v2.1.0`.
+> Tests were run using Solana `v2.1.0`.
 
 ## Building
 
