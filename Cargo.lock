@@ -2609,24 +2609,16 @@ checksum = "8b870d8c151b6f2fb93e84a13146138f05d02ed11c7e7c54f8826aaaf7c9f184"
 
 [[package]]
 name = "pinocchio"
-version = "0.1.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "799f082a41784b8d1b7f767ccd142b6f48d3c8338b98a6960bc46f3c4dd2c2e6"
-
-[[package]]
-name = "pinocchio"
 version = "0.6.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c9f716de2190437efa787dd7414f4bcea88d22c2f81bbeecabb7db6d9cc326bd"
+source = "git+https://github.com/febo/pinocchio.git?branch=febo/floating#49ea47596227d5eeabe661ea2cebc1be3d688c98"
 
 [[package]]
 name = "pinocchio-pubkey"
 version = "0.2.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b4800103b9bea24df2e78f161403fc8f8c2286cb5f874b2e5feebe6c5c4fb35a"
+source = "git+https://github.com/febo/pinocchio.git?branch=febo/floating#49ea47596227d5eeabe661ea2cebc1be3d688c98"
 dependencies = [
  "five8_const",
- "pinocchio 0.1.0",
+ "pinocchio",
 ]
 
 [[package]]
@@ -5215,7 +5207,7 @@ name = "token-interface"
 version = "0.0.0"
 dependencies = [
  "bytemuck",
- "pinocchio 0.6.0",
+ "pinocchio",
  "pinocchio-pubkey",
 ]
 
@@ -5225,7 +5217,7 @@ version = "0.0.0"
 dependencies = [
  "assert_matches",
  "bytemuck",
- "pinocchio 0.6.0",
+ "pinocchio",
  "pinocchio-pubkey",
  "solana-program-test",
  "solana-sdk",
