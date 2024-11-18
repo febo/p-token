@@ -20,18 +20,18 @@ This repository contains a **proof-of-concept** of a reimplementation of the SPL
 
 | Instruction                | Completed | CU (`p-token`) | CU (`spl-token`) |
 |----------------------------|-----------|----------------|------------------|
-| `InitializeMint`           | ✅        | 396            | 2967             |
-| `InitializeAccount`        | ✅        | 444            | 4527             |
-| `InitializeMultisig`       |           |                |                  |
+| `InitializeMint`           | ✅        | 370            | 2967             |
+| `InitializeAccount`        | ✅        | 406            | 4527             |
+| `InitializeMultisig`       | ✅        | 431            | 2973              |
 | `Transfer`                 | ✅        | 161            | 4645             |
-| `Approve`                  |           |                |                  |
-| `Revoke`                   |           |                |                  |
-| `SetAuthority`             |           |                |                  |
+| `Approve`                  | ✅        | 123            | 2904             |
+| `Revoke`                   | ✅        | 88             | 2677             |
+| `SetAuthority`             | ✅        | 137            | 3167             |
 | `MintTo`                   | ✅        | 160            | 4538             |
-| `Burn`                     |           |                |                  |
-| `CloseAccount`             |           |                |                  |
-| `FreezeAccount`            |           |                |                  |
-| `ThawAccount`              |           |                |                  |
+| `Burn`                     | ✅        | 158            | 4753             |
+| `CloseAccount`             | ✅        | 162            | 2916             |
+| `FreezeAccount`            | ✅        | 128            | 4265             |
+| `ThawAccount`              | ✅        | 129            | 4267             |
 | `TransferChecked`          |           |                |                  |
 | `ApproveChecked`           |           |                |                  |
 | `MintToChecked`            |           |                |                  |

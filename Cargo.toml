@@ -16,5 +16,7 @@ repository = "https://github.com/febo/token"
 
 [workspace.dependencies]
 bytemuck = { version="1.18.0", features=["derive"] }
-pinocchio = { git = "https://github.com/febo/pinocchio.git", branch = "febo/floating" }
-pinocchio-pubkey = { git = "https://github.com/febo/pinocchio.git", branch = "febo/floating" }
+pinocchio = { git = "https://github.com/febo/pinocchio.git", branch = "tweaks" }
+pinocchio-pubkey = { git = "https://github.com/febo/pinocchio.git", branch = "tweaks" }
+#pinocchio = { version = "^0", path = "/Users/febo/Developer/febo/pinocchio/sdk/pinocchio" }
+#pinocchio-pubkey = { version = "^0", path = "/Users/febo/Developer/febo/pinocchio/sdk/pubkey" }
