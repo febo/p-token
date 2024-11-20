@@ -12,6 +12,9 @@
   <a href="https://github.com/febo/p-token/actions/workflows/main.yml"><img src="https://img.shields.io/github/actions/workflow/status/febo/p-token/main.yml?logo=GitHub" /></a>
 </p>
 
+> [!WARNING]
+> The program is not yet fully-optimized. There are still opportunities to improve the compute units consumption.
+
 ## Overview
 
 This repository contains a **proof-of-concept** of a reimplementation of the SPL Token program, one of the most used programs on Solana, using [`pinocchio`](https://github.com/febo/pinocchio). The purpose is to have an implementation that optimizes the compute units, while being fully compatible with the original implementation &mdash; i.e., support the exact same instruction and account layouts as SPL Token, byte for byte.
@@ -22,7 +25,7 @@ This repository contains a **proof-of-concept** of a reimplementation of the SPL
 |----------------------------|-----------|----------------|------------------|
 | `InitializeMint`           | ✅        | 370            | 2967             |
 | `InitializeAccount`        | ✅        | 406            | 4527             |
-| `InitializeMultisig`       | ✅        | 431            | 2973              |
+| `InitializeMultisig`       | ✅        | 431            | 2973             |
 | `Transfer`                 | ✅        | 161            | 4645             |
 | `Approve`                  | ✅        | 123            | 2904             |
 | `Revoke`                   | ✅        | 88             | 2677             |
@@ -32,15 +35,15 @@ This repository contains a **proof-of-concept** of a reimplementation of the SPL
 | `CloseAccount`             | ✅        | 162            | 2916             |
 | `FreezeAccount`            | ✅        | 128            | 4265             |
 | `ThawAccount`              | ✅        | 129            | 4267             |
-| `TransferChecked`          |           |                |                  |
-| `ApproveChecked`           |           |                |                  |
-| `MintToChecked`            |           |                |                  |
-| `BurnChecked`              |           |                |                  |
-| `InitializeAccount2`       |           |                |                  |
+| `TransferChecked`          | ✅        | 275            | 6201             |
+| `ApproveChecked`           | ✅        | 222            | 4459             |
+| `MintToChecked`            | ✅        | 218            | 4546             |
+| `BurnChecked`              | ✅        | 201            | 4755             |
+| `InitializeAccount2`       | ✅        | 431            | 4388             |
 | `SyncNative`               |           |                |                  |
-| `InitializeAccount3`       |           |                |                  |
-| `InitializeMultisig2`      |           |                |                  |
-| `InitializeMint2`          |           |                |                  |
+| `InitializeAccount3`       | ✅        | 566            | 4240             |
+| `InitializeMultisig2`      | ✅        | 601            | 2826             |
+| `InitializeMint2`          | ✅        | 529            | 2827             |
 | `GetAccountDataSize`       |           |                |                  |
 | `InitializeImmutableOwner` |           |                |                  |
 | `AmountToUiAmount`         |           |                |                  |
