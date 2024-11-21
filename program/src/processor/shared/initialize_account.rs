@@ -1,3 +1,4 @@
+use core::mem::size_of;
 use pinocchio::{
     account_info::AccountInfo,
     program_error::ProgramError,
@@ -5,7 +6,6 @@ use pinocchio::{
     sysvars::{rent::Rent, Sysvar},
     ProgramResult,
 };
-use std::mem::size_of;
 use token_interface::{
     error::TokenError,
     native_mint::is_native_mint,

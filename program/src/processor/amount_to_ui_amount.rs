@@ -10,8 +10,13 @@ use super::{amount_to_ui_amount_string_trimmed, check_account_owner};
 pub fn process_amount_to_ui_amount(
     program_id: &Pubkey,
     accounts: &[AccountInfo],
-    amount: u64,
+    instruction_data: &[u8],
 ) -> ProgramResult {
+    if instruction_data.len() != 8 {
+        return Err(ProgramError::InvalidInstructionData);
+    }
+    let amount = unsafe { (instruction_data.as_ptr() as *const u64).read_unaligned() };
+
     let mint_info = accounts.first().ok_or(ProgramError::NotEnoughAccountKeys)?;
     check_account_owner(program_id, mint_info)?;
 

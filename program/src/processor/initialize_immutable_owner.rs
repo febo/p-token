@@ -1,8 +1,14 @@
-use pinocchio::{account_info::AccountInfo, msg, program_error::ProgramError, ProgramResult};
+use pinocchio::{
+    account_info::AccountInfo, msg, program_error::ProgramError, pubkey::Pubkey, ProgramResult,
+};
 use token_interface::{error::TokenError, state::account::Account};
 
 #[inline(never)]
-pub fn process_initialize_immutable_owner(accounts: &[AccountInfo]) -> ProgramResult {
+pub fn process_initialize_immutable_owner(
+    _program_id: &Pubkey,
+    accounts: &[AccountInfo],
+    _instruction_data: &[u8],
+) -> ProgramResult {
     let token_account_info = accounts.first().ok_or(ProgramError::NotEnoughAccountKeys)?;
 
     let account = bytemuck::try_from_bytes_mut::<Account>(unsafe {

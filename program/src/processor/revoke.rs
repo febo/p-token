@@ -6,7 +6,11 @@ use token_interface::{error::TokenError, state::account::Account};
 use super::validate_owner;
 
 #[inline(never)]
-pub fn process_revoke(program_id: &Pubkey, accounts: &[AccountInfo]) -> ProgramResult {
+pub fn process_revoke(
+    program_id: &Pubkey,
+    accounts: &[AccountInfo],
+    _instruction_data: &[u8],
+) -> ProgramResult {
     let [source_account_info, owner_info, remaning @ ..] = accounts else {
         return Err(ProgramError::NotEnoughAccountKeys);
     };

@@ -6,7 +6,11 @@ use token_interface::{error::TokenError, state::account::Account};
 use super::{is_owned_by_system_program_or_incinerator, validate_owner, INCINERATOR_ID};
 
 #[inline(never)]
-pub fn process_close_account(program_id: &Pubkey, accounts: &[AccountInfo]) -> ProgramResult {
+pub fn process_close_account(
+    program_id: &Pubkey,
+    accounts: &[AccountInfo],
+    _instruction_data: &[u8],
+) -> ProgramResult {
     let [source_account_info, destination_account_info, authority_info, remaining @ ..] = accounts
     else {
         return Err(ProgramError::NotEnoughAccountKeys);

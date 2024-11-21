@@ -1,3 +1,4 @@
+use core::{marker::PhantomData, mem::size_of};
 use pinocchio::{
     account_info::AccountInfo,
     program_error::ProgramError,
@@ -5,7 +6,6 @@ use pinocchio::{
     sysvars::{rent::Rent, Sysvar},
     ProgramResult,
 };
-use std::{marker::PhantomData, mem::size_of};
 use token_interface::{
     error::TokenError,
     state::{mint::Mint, PodCOption},
@@ -14,9 +14,11 @@ use token_interface::{
 #[inline(always)]
 pub fn process_initialize_mint(
     accounts: &[AccountInfo],
-    args: &InitializeMint,
+    instruction_data: &[u8],
     rent_sysvar_account: bool,
 ) -> ProgramResult {
+    let args = InitializeMint::try_from_bytes(instruction_data)?;
+
     let (mint_info, rent_sysvar_info) = if rent_sysvar_account {
         let [mint_info, rent_sysvar_info, _remaining @ ..] = accounts else {
             return Err(ProgramError::NotEnoughAccountKeys);

@@ -6,7 +6,8 @@ use super::shared;
 pub fn process_initialize_account3(
     program_id: &Pubkey,
     accounts: &[AccountInfo],
-    owner: &Pubkey,
+    instruction_data: &[u8],
 ) -> ProgramResult {
+    let owner = unsafe { &*(instruction_data.as_ptr() as *const Pubkey) };
     shared::initialize_account::process_initialize_account(program_id, accounts, Some(owner), false)
 }

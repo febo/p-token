@@ -1,3 +1,5 @@
+use core::str;
+
 use pinocchio::{
     account_info::AccountInfo, program::set_return_data, program_error::ProgramError,
     pubkey::Pubkey, ProgramResult,
@@ -10,8 +12,11 @@ use super::{check_account_owner, try_ui_amount_into_amount};
 pub fn process_ui_amount_to_amount(
     program_id: &Pubkey,
     accounts: &[AccountInfo],
-    ui_amount: &str,
+    instruction_data: &[u8],
 ) -> ProgramResult {
+    let ui_amount =
+        str::from_utf8(instruction_data).map_err(|_error| ProgramError::InvalidInstructionData)?;
+
     let mint_info = accounts.first().ok_or(ProgramError::NotEnoughAccountKeys)?;
     check_account_owner(program_id, mint_info)?;
 

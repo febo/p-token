@@ -1,8 +1,7 @@
+use core::marker::PhantomData;
+
 use pinocchio::{
-    account_info::AccountInfo,
-    program_error::ProgramError,
-    pubkey::{Pubkey, PUBKEY_BYTES},
-    ProgramResult,
+    account_info::AccountInfo, program_error::ProgramError, pubkey::Pubkey, ProgramResult,
 };
 use token_interface::{
     error::TokenError,
@@ -16,9 +15,12 @@ use super::validate_owner;
 pub fn process_set_authority(
     program_id: &Pubkey,
     accounts: &[AccountInfo],
-    authority_type: AuthorityType,
-    new_authority: Option<&Pubkey>,
+    instruction_data: &[u8],
 ) -> ProgramResult {
+    let args = SetAuthority::try_from_bytes(instruction_data)?;
+    let authority_type = args.authority_type();
+    let new_authority = args.new_authority();
+
     let [account_info, authority_info, remaning @ ..] = accounts else {
         return Err(ProgramError::NotEnoughAccountKeys);
     };
@@ -99,35 +101,41 @@ pub fn process_set_authority(
     Ok(())
 }
 
-/// Instruction data for the `InitializeMint` instruction.
-pub struct SetAuthority<'a> {
-    pub authority_type: AuthorityType,
+struct SetAuthority<'a> {
+    raw: *const u8,
 
-    /// New authority.
-    pub new_authority: Option<&'a Pubkey>,
+    _data: PhantomData<&'a [u8]>,
 }
 
-impl<'a> SetAuthority<'a> {
-    pub fn try_from_bytes(data: &'a [u8]) -> Result<Self, ProgramError> {
-        // We expect the data to be at least the size of the u8 (authority_type)
-        // plus one byte for the authority option.
-        if data.len() <= 2 {
+impl SetAuthority<'_> {
+    #[inline(always)]
+    pub fn try_from_bytes(bytes: &[u8]) -> Result<SetAuthority, ProgramError> {
+        // The minimum expected size of the instruction data.
+        // - authority_type (1 byte)
+        // - option + new_authority (1 byte + 32 bytes)
+        if bytes.len() < 2 {
             return Err(ProgramError::InvalidInstructionData);
         }
 
-        let (authority_type, remaining) = data.split_at(1);
-
-        let new_authority = match remaining.split_first() {
-            Some((&0, _)) => None,
-            Some((&1, pubkey)) if pubkey.len() == PUBKEY_BYTES => {
-                Some(bytemuck::from_bytes::<Pubkey>(pubkey))
-            }
-            _ => return Err(ProgramError::InvalidInstructionData),
-        };
-
-        Ok(Self {
-            authority_type: AuthorityType::from(authority_type[0]),
-            new_authority,
+        Ok(SetAuthority {
+            raw: bytes.as_ptr(),
+            _data: PhantomData,
         })
+    }
+
+    #[inline(always)]
+    pub fn authority_type(&self) -> AuthorityType {
+        unsafe { AuthorityType::from(*self.raw) }
+    }
+
+    #[inline(always)]
+    pub fn new_authority(&self) -> Option<&Pubkey> {
+        unsafe {
+            if *self.raw.add(33) == 0 {
+                Option::None
+            } else {
+                Option::Some(&*(self.raw.add(34) as *const Pubkey))
+            }
+        }
     }
 }
