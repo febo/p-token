@@ -40,14 +40,14 @@ This repository contains a **proof-of-concept** of a reimplementation of the SPL
 | `MintToChecked`            | ✅        | 218            | 4546             |
 | `BurnChecked`              | ✅        | 201            | 4755             |
 | `InitializeAccount2`       | ✅        | 431            | 4388             |
-| `SyncNative`               |           |                |                  |
+| `SyncNative`               | ✅        |                |                  |
 | `InitializeAccount3`       | ✅        | 566            | 4240             |
 | `InitializeMultisig2`      | ✅        | 601            | 2826             |
 | `InitializeMint2`          | ✅        | 529            | 2827             |
-| `GetAccountDataSize`       |           |                |                  |
-| `InitializeImmutableOwner` |           |                |                  |
-| `AmountToUiAmount`         |           |                |                  |
-| `UiAmountToAmount`         |           |                |                  |
+| `GetAccountDataSize`       | ✅        |                |                  |
+| `InitializeImmutableOwner` | ✅        |                |                  |
+| `AmountToUiAmount`         | ✅        |                |                  |
+| `UiAmountToAmount`         | ✅        |                |                  |
 
 > Tests were run using Solana `v2.1.0`.
 
