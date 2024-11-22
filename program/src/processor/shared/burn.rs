@@ -1,6 +1,4 @@
-use pinocchio::{
-    account_info::AccountInfo, program_error::ProgramError, pubkey::Pubkey, ProgramResult,
-};
+use pinocchio::{account_info::AccountInfo, program_error::ProgramError, ProgramResult};
 use token_interface::{
     error::TokenError,
     state::{account::Account, mint::Mint},
@@ -12,7 +10,6 @@ use crate::processor::{
 
 #[inline(always)]
 pub fn process_burn(
-    program_id: &Pubkey,
     accounts: &[AccountInfo],
     amount: u64,
     expected_decimals: Option<u8>,
@@ -58,7 +55,7 @@ pub fn process_burn(
     if !is_owned_by_system_program_or_incinerator(&source_account.owner) {
         match source_account.delegate.as_ref() {
             Some(delegate) if authority_info.key() == delegate => {
-                validate_owner(program_id, delegate, authority_info, remaining)?;
+                validate_owner(delegate, authority_info, remaining)?;
 
                 let delegated_amount = u64::from(source_account.delegated_amount)
                     .checked_sub(amount)
@@ -70,14 +67,14 @@ pub fn process_burn(
                 }
             }
             _ => {
-                validate_owner(program_id, &source_account.owner, authority_info, remaining)?;
+                validate_owner(&source_account.owner, authority_info, remaining)?;
             }
         }
     }
 
     if amount == 0 {
-        check_account_owner(program_id, source_account_info)?;
-        check_account_owner(program_id, mint_info)?;
+        check_account_owner(source_account_info)?;
+        check_account_owner(mint_info)?;
     }
 
     source_account.amount = updated_source_amount.into();

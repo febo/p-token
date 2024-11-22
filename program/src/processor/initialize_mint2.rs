@@ -1,12 +1,11 @@
-use pinocchio::{account_info::AccountInfo, pubkey::Pubkey, ProgramResult};
+use pinocchio::{account_info::AccountInfo, ProgramResult};
 
-use super::shared;
+use super::initialize_mint::process_initialize_mint;
 
-#[inline(never)]
+#[inline(always)]
 pub fn process_initialize_mint2(
-    _program_id: &Pubkey,
     accounts: &[AccountInfo],
     instruction_data: &[u8],
 ) -> ProgramResult {
-    shared::initialize_mint::process_initialize_mint(accounts, instruction_data, false)
+    process_initialize_mint(accounts, instruction_data, false)
 }

@@ -1,12 +1,9 @@
-use pinocchio::{
-    account_info::AccountInfo, program_error::ProgramError, pubkey::Pubkey, ProgramResult,
-};
+use pinocchio::{account_info::AccountInfo, program_error::ProgramError, ProgramResult};
 
 use super::shared;
 
 #[inline(never)]
 pub fn process_initialize_multisig(
-    _program_id: &Pubkey,
     accounts: &[AccountInfo],
     instruction_data: &[u8],
 ) -> ProgramResult {

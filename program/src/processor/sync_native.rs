@@ -1,19 +1,13 @@
-use pinocchio::{
-    account_info::AccountInfo, program_error::ProgramError, pubkey::Pubkey, ProgramResult,
-};
+use pinocchio::{account_info::AccountInfo, program_error::ProgramError, ProgramResult};
 use token_interface::{error::TokenError, state::account::Account};
 
 use super::check_account_owner;
 
 #[inline(never)]
-pub fn process_sync_native(
-    program_id: &Pubkey,
-    accounts: &[AccountInfo],
-    _instruction_data: &[u8],
-) -> ProgramResult {
+pub fn process_sync_native(accounts: &[AccountInfo]) -> ProgramResult {
     let native_account_info = accounts.first().ok_or(ProgramError::NotEnoughAccountKeys)?;
 
-    check_account_owner(program_id, native_account_info)?;
+    check_account_owner(native_account_info)?;
 
     let native_account = bytemuck::try_from_bytes_mut::<Account>(unsafe {
         native_account_info.borrow_mut_data_unchecked()

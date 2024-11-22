@@ -1,22 +1,17 @@
 use pinocchio::{
-    account_info::AccountInfo, program::set_return_data, program_error::ProgramError,
-    pubkey::Pubkey, ProgramResult,
+    account_info::AccountInfo, program::set_return_data, program_error::ProgramError, ProgramResult,
 };
 use token_interface::state::{account::Account, mint::Mint};
 
 use super::check_account_owner;
 
 #[inline(never)]
-pub fn process_get_account_data_size(
-    program_id: &Pubkey,
-    accounts: &[AccountInfo],
-    _instruction_data: &[u8],
-) -> ProgramResult {
+pub fn process_get_account_data_size(accounts: &[AccountInfo]) -> ProgramResult {
     let [mint_info, _remaning @ ..] = accounts else {
         return Err(ProgramError::NotEnoughAccountKeys);
     };
 
-    check_account_owner(program_id, mint_info)?;
+    check_account_owner(mint_info)?;
 
     let _ = bytemuck::try_from_bytes::<Mint>(unsafe { mint_info.borrow_data_unchecked() })
         .map_err(|_error| ProgramError::InvalidAccountData)?;

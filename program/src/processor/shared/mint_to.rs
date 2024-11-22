@@ -1,6 +1,4 @@
-use pinocchio::{
-    account_info::AccountInfo, program_error::ProgramError, pubkey::Pubkey, ProgramResult,
-};
+use pinocchio::{account_info::AccountInfo, program_error::ProgramError, ProgramResult};
 use token_interface::{
     error::TokenError,
     native_mint::is_native_mint,
@@ -11,7 +9,6 @@ use crate::processor::{check_account_owner, validate_owner};
 
 #[inline(always)]
 pub fn process_mint_to(
-    program_id: &Pubkey,
     accounts: &[AccountInfo],
     amount: u64,
     expected_decimals: Option<u8>,
@@ -49,13 +46,13 @@ pub fn process_mint_to(
     }
 
     match mint.mint_authority.get() {
-        Some(mint_authority) => validate_owner(program_id, &mint_authority, owner_info, remaining)?,
+        Some(mint_authority) => validate_owner(&mint_authority, owner_info, remaining)?,
         None => return Err(TokenError::FixedSupply.into()),
     }
 
     if amount == 0 {
-        check_account_owner(program_id, mint_info)?;
-        check_account_owner(program_id, destination_account_info)?;
+        check_account_owner(mint_info)?;
+        check_account_owner(destination_account_info)?;
     }
 
     let destination_amount = u64::from(destination_account.amount)

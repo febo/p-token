@@ -23,10 +23,10 @@ This repository contains a **proof-of-concept** of a reimplementation of the SPL
 
 | Instruction                | Completed | CU (`p-token`) | CU (`spl-token`) |
 |----------------------------|-----------|----------------|------------------|
-| `InitializeMint`           | ✅        | 389            | 2967             |
-| `InitializeAccount`        | ✅        | 409            | 4527             |
-| `InitializeMultisig`       | ✅        | 458            | 2973             |
-| `Transfer`                 | ✅        | 194            | 4645             |
+| `InitializeMint`           | ✅        | 378            | 2967             |
+| `InitializeAccount`        | ✅        | 445            | 4527             |
+| `InitializeMultisig`       | ✅        | 464            | 2973             |
+| `Transfer`                 | ✅        | 197            | 4645             |
 | `Approve`                  | ✅        | 151            | 2904             |
 | `Revoke`                   | ✅        | 93             | 2677             |
 | `SetAuthority`             | ✅        | 171            | 3167             |
@@ -35,14 +35,14 @@ This repository contains a **proof-of-concept** of a reimplementation of the SPL
 | `CloseAccount`             | ✅        | 163            | 2916             |
 | `FreezeAccount`            | ✅        | 131            | 4265             |
 | `ThawAccount`              | ✅        | 132            | 4267             |
-| `TransferChecked`          | ✅        | 207            | 6201             |
+| `TransferChecked`          | ✅        | 254            | 6201             |
 | `ApproveChecked`           | ✅        | 166            | 4459             |
 | `MintToChecked`            | ✅        | 180            | 4546             |
 | `BurnChecked`              | ✅        | 166            | 4755             |
-| `InitializeAccount2`       | ✅        | 394            | 4388             |
+| `InitializeAccount2`       | ✅        | 430            | 4388             |
 | `SyncNative`               | ✅        |                |                  |
-| `InitializeAccount3`       | ✅        | 523            | 4240             |
-| `InitializeMultisig2`      | ✅        | 563            | 2826             |
+| `InitializeAccount3`       | ✅        | 560            | 4240             |
+| `InitializeMultisig2`      | ✅        | 591            | 2826             |
 | `InitializeMint2`          | ✅        | 500            | 2827             |
 | `GetAccountDataSize`       | ✅        |                |                  |
 | `InitializeImmutableOwner` | ✅        |                |                  |

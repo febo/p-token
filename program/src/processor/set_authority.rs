@@ -12,11 +12,7 @@ use token_interface::{
 use super::validate_owner;
 
 #[inline(never)]
-pub fn process_set_authority(
-    program_id: &Pubkey,
-    accounts: &[AccountInfo],
-    instruction_data: &[u8],
-) -> ProgramResult {
+pub fn process_set_authority(accounts: &[AccountInfo], instruction_data: &[u8]) -> ProgramResult {
     let args = SetAuthority::try_from_bytes(instruction_data)?;
     let authority_type = args.authority_type();
     let new_authority = args.new_authority();
@@ -37,7 +33,7 @@ pub fn process_set_authority(
 
         match authority_type {
             AuthorityType::AccountOwner => {
-                validate_owner(program_id, &account.owner, authority_info, remaning)?;
+                validate_owner(&account.owner, authority_info, remaning)?;
 
                 if let Some(authority) = new_authority {
                     account.owner = *authority;
@@ -54,7 +50,7 @@ pub fn process_set_authority(
             }
             AuthorityType::CloseAccount => {
                 let authority = account.close_authority.as_ref().unwrap_or(&account.owner);
-                validate_owner(program_id, authority, authority_info, remaning)?;
+                validate_owner(authority, authority_info, remaning)?;
                 account.close_authority = PodCOption::from(new_authority.copied());
             }
             _ => {
@@ -76,7 +72,7 @@ pub fn process_set_authority(
                     .as_ref()
                     .ok_or(TokenError::FixedSupply)?;
 
-                validate_owner(program_id, mint_authority, authority_info, remaning)?;
+                validate_owner(mint_authority, authority_info, remaning)?;
                 mint.mint_authority = PodCOption::from(new_authority.copied());
             }
             AuthorityType::FreezeAccount => {
@@ -87,7 +83,7 @@ pub fn process_set_authority(
                     .as_ref()
                     .ok_or(TokenError::MintCannotFreeze)?;
 
-                validate_owner(program_id, freeze_authority, authority_info, remaning)?;
+                validate_owner(freeze_authority, authority_info, remaning)?;
                 mint.freeze_authority = PodCOption::from(new_authority.copied());
             }
             _ => {

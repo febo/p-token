@@ -1,19 +1,14 @@
-use pinocchio::{
-    account_info::AccountInfo, program_error::ProgramError, pubkey::Pubkey, ProgramResult,
-};
+use pinocchio::{account_info::AccountInfo, program_error::ProgramError, ProgramResult};
 
 use super::shared;
 
 #[inline(never)]
-pub fn process_approve(
-    program_id: &Pubkey,
-    accounts: &[AccountInfo],
-    instruction_data: &[u8],
-) -> ProgramResult {
-    if instruction_data.len() != 8 {
-        return Err(ProgramError::InvalidInstructionData);
-    }
-    let amount = unsafe { (instruction_data.as_ptr() as *const u64).read_unaligned() };
+pub fn process_approve(accounts: &[AccountInfo], instruction_data: &[u8]) -> ProgramResult {
+    let amount = u64::from_le_bytes(
+        instruction_data
+            .try_into()
+            .map_err(|_error| ProgramError::InvalidInstructionData)?,
+    );
 
-    shared::approve::process_approve(program_id, accounts, amount, None)
+    shared::approve::process_approve(accounts, amount, None)
 }

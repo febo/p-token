@@ -1,6 +1,4 @@
-use pinocchio::{
-    account_info::AccountInfo, program_error::ProgramError, pubkey::Pubkey, ProgramResult,
-};
+use pinocchio::{account_info::AccountInfo, program_error::ProgramError, ProgramResult};
 use token_interface::{
     error::TokenError,
     state::{account::Account, mint::Mint, PodCOption},
@@ -10,7 +8,6 @@ use crate::processor::validate_owner;
 
 #[inline(always)]
 pub fn process_approve(
-    program_id: &Pubkey,
     accounts: &[AccountInfo],
     amount: u64,
     expected_decimals: Option<u8>,
@@ -65,7 +62,7 @@ pub fn process_approve(
         }
     }
 
-    validate_owner(program_id, &source_account.owner, owner_info, remaining)?;
+    validate_owner(&source_account.owner, owner_info, remaining)?;
 
     source_account.delegate = PodCOption::some(*delegate_info.key());
     source_account.delegated_amount = amount.into();

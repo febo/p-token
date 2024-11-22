@@ -1,6 +1,4 @@
-use pinocchio::{
-    account_info::AccountInfo, program_error::ProgramError, pubkey::Pubkey, ProgramResult,
-};
+use pinocchio::{account_info::AccountInfo, program_error::ProgramError, ProgramResult};
 use token_interface::{
     error::TokenError,
     state::{
@@ -12,11 +10,7 @@ use token_interface::{
 use crate::processor::validate_owner;
 
 #[inline(always)]
-pub fn process_toggle_account_state(
-    program_id: &Pubkey,
-    accounts: &[AccountInfo],
-    freeze: bool,
-) -> ProgramResult {
+pub fn process_toggle_account_state(accounts: &[AccountInfo], freeze: bool) -> ProgramResult {
     let [source_account_info, mint_info, authority_info, remaining @ ..] = accounts else {
         return Err(ProgramError::NotEnoughAccountKeys);
     };
@@ -40,7 +34,7 @@ pub fn process_toggle_account_state(
         .map_err(|_error| ProgramError::InvalidAccountData)?;
 
     match mint.freeze_authority.as_ref() {
-        Option::Some(authority) => validate_owner(program_id, authority, authority_info, remaining),
+        Option::Some(authority) => validate_owner(authority, authority_info, remaining),
         Option::None => Err(TokenError::MintCannotFreeze.into()),
     }?;
 

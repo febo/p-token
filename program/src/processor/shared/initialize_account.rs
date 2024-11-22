@@ -20,7 +20,6 @@ use crate::processor::check_account_owner;
 
 #[inline(always)]
 pub fn process_initialize_account(
-    program_id: &Pubkey,
     accounts: &[AccountInfo],
     owner: Option<&Pubkey>,
     rent_sysvar_account: bool,
@@ -62,7 +61,7 @@ pub fn process_initialize_account(
     let is_native_mint = is_native_mint(mint_info.key());
 
     if !is_native_mint {
-        check_account_owner(program_id, mint_info)?;
+        check_account_owner(mint_info)?;
 
         let mint_data = unsafe { mint_info.borrow_data_unchecked() };
         let mint = bytemuck::try_from_bytes::<Mint>(mint_data)

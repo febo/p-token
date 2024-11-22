@@ -1,6 +1,4 @@
-use pinocchio::{
-    account_info::AccountInfo, program_error::ProgramError, pubkey::Pubkey, ProgramResult,
-};
+use pinocchio::{account_info::AccountInfo, program_error::ProgramError, ProgramResult};
 use token_interface::{
     error::TokenError,
     native_mint::is_native_mint,
@@ -11,7 +9,6 @@ use crate::processor::{check_account_owner, validate_owner};
 
 #[inline(always)]
 pub fn process_transfer(
-    program_id: &Pubkey,
     accounts: &[AccountInfo],
     amount: u64,
     expected_decimals: Option<u8>,
@@ -96,12 +93,12 @@ pub fn process_transfer(
         }
     }
 
-    let self_transfer = source_account_info.key() == destination_account_info.key();
+    let self_transfer = source_account_info == destination_account_info;
 
     // Validates the authority (delegate or owner).
 
     if source_account.delegate.as_ref() == Some(authority_info.key()) {
-        validate_owner(program_id, authority_info.key(), authority_info, remaning)?;
+        validate_owner(authority_info.key(), authority_info, remaning)?;
 
         let delegated_amount = u64::from(source_account.delegated_amount)
             .checked_sub(amount)
@@ -115,12 +112,12 @@ pub fn process_transfer(
             }
         }
     } else {
-        validate_owner(program_id, &source_account.owner, authority_info, remaning)?;
+        validate_owner(&source_account.owner, authority_info, remaning)?;
     }
 
     if self_transfer || amount == 0 {
-        check_account_owner(program_id, source_account_info)?;
-        check_account_owner(program_id, destination_account_info)?;
+        check_account_owner(source_account_info)?;
+        check_account_owner(destination_account_info)?;
 
         // No need to move tokens around.
         return Ok(());

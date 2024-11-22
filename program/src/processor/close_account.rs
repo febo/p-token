@@ -1,16 +1,10 @@
-use pinocchio::{
-    account_info::AccountInfo, program_error::ProgramError, pubkey::Pubkey, ProgramResult,
-};
+use pinocchio::{account_info::AccountInfo, program_error::ProgramError, ProgramResult};
 use token_interface::{error::TokenError, state::account::Account};
 
 use super::{is_owned_by_system_program_or_incinerator, validate_owner, INCINERATOR_ID};
 
-#[inline(never)]
-pub fn process_close_account(
-    program_id: &Pubkey,
-    accounts: &[AccountInfo],
-    _instruction_data: &[u8],
-) -> ProgramResult {
+#[inline(always)]
+pub fn process_close_account(accounts: &[AccountInfo]) -> ProgramResult {
     let [source_account_info, destination_account_info, authority_info, remaining @ ..] = accounts
     else {
         return Err(ProgramError::NotEnoughAccountKeys);
@@ -34,7 +28,7 @@ pub fn process_close_account(
         .unwrap_or(source_account.owner);
 
     if !is_owned_by_system_program_or_incinerator(source_account_info.owner()) {
-        validate_owner(program_id, &authority, authority_info, remaining)?;
+        validate_owner(&authority, authority_info, remaining)?;
     } else if destination_account_info.key() != &INCINERATOR_ID {
         return Err(ProgramError::InvalidAccountData);
     }
