@@ -3,7 +3,7 @@ use token_interface::{error::TokenError, state::account::Account};
 
 use super::check_account_owner;
 
-#[inline(never)]
+#[inline(always)]
 pub fn process_sync_native(accounts: &[AccountInfo]) -> ProgramResult {
     let native_account_info = accounts.first().ok_or(ProgramError::NotEnoughAccountKeys)?;
 

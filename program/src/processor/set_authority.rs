@@ -11,7 +11,7 @@ use token_interface::{
 
 use super::validate_owner;
 
-#[inline(never)]
+#[inline(always)]
 pub fn process_set_authority(accounts: &[AccountInfo], instruction_data: &[u8]) -> ProgramResult {
     let args = SetAuthority::try_from_bytes(instruction_data)?;
     let authority_type = args.authority_type();
@@ -127,10 +127,10 @@ impl SetAuthority<'_> {
     #[inline(always)]
     pub fn new_authority(&self) -> Option<&Pubkey> {
         unsafe {
-            if *self.raw.add(33) == 0 {
+            if *self.raw.add(1) == 0 {
                 Option::None
             } else {
-                Option::Some(&*(self.raw.add(34) as *const Pubkey))
+                Option::Some(&*(self.raw.add(2) as *const Pubkey))
             }
         }
     }

@@ -5,7 +5,7 @@ use token_interface::state::{account::Account, mint::Mint};
 
 use super::check_account_owner;
 
-#[inline(never)]
+#[inline(always)]
 pub fn process_get_account_data_size(accounts: &[AccountInfo]) -> ProgramResult {
     let [mint_info, _remaning @ ..] = accounts else {
         return Err(ProgramError::NotEnoughAccountKeys);

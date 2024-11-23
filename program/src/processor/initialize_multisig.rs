@@ -2,7 +2,7 @@ use pinocchio::{account_info::AccountInfo, program_error::ProgramError, ProgramR
 
 use super::shared;
 
-#[inline(never)]
+#[inline(always)]
 pub fn process_initialize_multisig(
     accounts: &[AccountInfo],
     instruction_data: &[u8],

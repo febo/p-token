@@ -2,7 +2,7 @@ use pinocchio::{account_info::AccountInfo, program_error::ProgramError, ProgramR
 
 use super::shared;
 
-#[inline(never)]
+#[inline(always)]
 pub fn process_transfer_checked(
     accounts: &[AccountInfo],
     instruction_data: &[u8],

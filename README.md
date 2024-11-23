@@ -23,27 +23,27 @@ This repository contains a **proof-of-concept** of a reimplementation of the SPL
 
 | Instruction                | Completed | CU (`p-token`) | CU (`spl-token`) |
 |----------------------------|-----------|----------------|------------------|
-| `InitializeMint`           | ✅        | 378            | 2967             |
-| `InitializeAccount`        | ✅        | 445            | 4527             |
-| `InitializeMultisig`       | ✅        | 464            | 2973             |
-| `Transfer`                 | ✅        | 197            | 4645             |
-| `Approve`                  | ✅        | 151            | 2904             |
-| `Revoke`                   | ✅        | 93             | 2677             |
-| `SetAuthority`             | ✅        | 171            | 3167             |
-| `MintTo`                   | ✅        | 196            | 4538             |
-| `Burn`                     | ✅        | 184            | 4753             |
-| `CloseAccount`             | ✅        | 163            | 2916             |
-| `FreezeAccount`            | ✅        | 131            | 4265             |
-| `ThawAccount`              | ✅        | 132            | 4267             |
-| `TransferChecked`          | ✅        | 254            | 6201             |
-| `ApproveChecked`           | ✅        | 166            | 4459             |
-| `MintToChecked`            | ✅        | 180            | 4546             |
-| `BurnChecked`              | ✅        | 166            | 4755             |
-| `InitializeAccount2`       | ✅        | 430            | 4388             |
+| `InitializeMint`           | ✅        | 361            | 2967             |
+| `InitializeAccount`        | ✅        | 430            | 4527             |
+| `InitializeMultisig`       | ✅        | 454            | 2973             |
+| `Transfer`                 | ✅        | 159            | 4645             |
+| `Approve`                  | ✅        | 144            | 2904             |
+| `Revoke`                   | ✅        | 110            | 2677             |
+| `SetAuthority`             | ✅        | 153            | 3167             |
+| `MintTo`                   | ✅        | 160            | 4538             |
+| `Burn`                     | ✅        | 180            | 4753             |
+| `CloseAccount`             | ✅        | 158            | 2916             |
+| `FreezeAccount`            | ✅        | 149            | 4265             |
+| `ThawAccount`              | ✅        | 150            | 4267             |
+| `TransferChecked`          | ✅        | 224            | 6201             |
+| `ApproveChecked`           | ✅        | 185            | 4459             |
+| `MintToChecked`            | ✅        | 191            | 4546             |
+| `BurnChecked`              | ✅        | 182            | 4755             |
+| `InitializeAccount2`       | ✅        | 414            | 4388             |
 | `SyncNative`               | ✅        |                |                  |
-| `InitializeAccount3`       | ✅        | 560            | 4240             |
-| `InitializeMultisig2`      | ✅        | 591            | 2826             |
-| `InitializeMint2`          | ✅        | 500            | 2827             |
+| `InitializeAccount3`       | ✅        | 518            | 4240             |
+| `InitializeMultisig2`      | ✅        | 584            | 2826             |
+| `InitializeMint2`          | ✅        | 495            | 2827             |
 | `GetAccountDataSize`       | ✅        |                |                  |
 | `InitializeImmutableOwner` | ✅        |                |                  |
 | `AmountToUiAmount`         | ✅        |                |                  |

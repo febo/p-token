@@ -2,7 +2,7 @@ use pinocchio::{account_info::AccountInfo, pubkey::Pubkey, ProgramResult};
 
 use super::shared;
 
-#[inline(never)]
+#[inline(always)]
 pub fn process_initialize_account2(
     accounts: &[AccountInfo],
     instruction_data: &[u8],

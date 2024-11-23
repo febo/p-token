@@ -5,7 +5,7 @@ use token_interface::{error::TokenError, state::mint::Mint};
 
 use super::{amount_to_ui_amount_string_trimmed, check_account_owner};
 
-#[inline(never)]
+#[inline(always)]
 pub fn process_amount_to_ui_amount(
     accounts: &[AccountInfo],
     instruction_data: &[u8],
