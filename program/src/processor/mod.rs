@@ -1,10 +1,7 @@
 use pinocchio::{
     account_info::AccountInfo, program_error::ProgramError, pubkey::Pubkey, ProgramResult,
 };
-use token_interface::{
-    error::TokenError,
-    state::multisig::{Multisig, MAX_SIGNERS},
-};
+use token_interface::error::TokenError;
 
 pub mod amount_to_ui_amount;
 pub mod approve;
@@ -60,6 +57,8 @@ pub use transfer::process_transfer;
 pub use transfer_checked::process_transfer_checked;
 pub use ui_amount_to_amount::process_ui_amount_to_amount;
 
+use crate::state::multisig::{Multisig, MAX_SIGNERS};
+
 /// Incinerator address.
 const INCINERATOR_ID: Pubkey =
     pinocchio_pubkey::pubkey!("1nc1nerator11111111111111111111111111111111");
@@ -94,8 +93,7 @@ fn validate_owner(
     }
 
     if owner_account_info.data_len() == Multisig::LEN && &crate::ID != owner_account_info.owner() {
-        let multisig_data = owner_account_info.try_borrow_data()?;
-        let multisig = bytemuck::from_bytes::<Multisig>(&multisig_data);
+        let multisig = unsafe { Multisig::from_bytes(owner_account_info.borrow_data_unchecked()) };
 
         let mut num_signers = 0;
         let mut matched = [false; MAX_SIGNERS];

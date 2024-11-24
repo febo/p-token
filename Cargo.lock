@@ -5216,7 +5216,6 @@ name = "token-program"
 version = "0.0.0"
 dependencies = [
  "assert_matches",
- "bytemuck",
  "pinocchio",
  "pinocchio-pubkey",
  "solana-program-test",

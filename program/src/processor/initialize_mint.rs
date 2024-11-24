@@ -6,10 +6,9 @@ use pinocchio::{
     sysvars::{rent::Rent, Sysvar},
     ProgramResult,
 };
-use token_interface::{
-    error::TokenError,
-    state::{mint::Mint, PodCOption},
-};
+use token_interface::error::TokenError;
+
+use crate::state::mint::Mint;
 
 #[inline(always)]
 pub fn process_initialize_mint(
@@ -17,7 +16,11 @@ pub fn process_initialize_mint(
     instruction_data: &[u8],
     rent_sysvar_account: bool,
 ) -> ProgramResult {
+    // Validates the instruction data.
+
     let args = InitializeMint::try_from_bytes(instruction_data)?;
+
+    // Validates the accounts.
 
     let (mint_info, rent_sysvar_info) = if rent_sysvar_account {
         let [mint_info, rent_sysvar_info, _remaining @ ..] = accounts else {
@@ -31,11 +34,9 @@ pub fn process_initialize_mint(
         (mint_info, None)
     };
 
-    let mint =
-        bytemuck::try_from_bytes_mut::<Mint>(unsafe { mint_info.borrow_mut_data_unchecked() })
-            .map_err(|_error| ProgramError::InvalidAccountData)?;
+    let mint = unsafe { Mint::from_bytes_mut(mint_info.borrow_mut_data_unchecked()) };
 
-    if mint.is_initialized.into() {
+    if mint.is_initialized() {
         return Err(TokenError::AlreadyInUse.into());
     }
 
@@ -54,12 +55,12 @@ pub fn process_initialize_mint(
 
     // Initialize the mint.
 
-    mint.mint_authority = PodCOption::from(Some(*args.mint_authority()));
+    mint.set_initialized(true);
+    mint.set_mint_authority(args.mint_authority());
     mint.decimals = args.decimals();
-    mint.is_initialized = true.into();
 
     if let Some(freeze_authority) = args.freeze_authority() {
-        mint.freeze_authority = PodCOption::from(Some(*freeze_authority));
+        mint.set_freeze_authority(freeze_authority);
     }
 
     Ok(())
@@ -73,6 +74,7 @@ pub struct InitializeMint<'a> {
 }
 
 impl InitializeMint<'_> {
+    #[inline]
     pub fn try_from_bytes(bytes: &[u8]) -> Result<InitializeMint, ProgramError> {
         // The minimum expected size of the instruction data.
         // - decimals (1 byte)
@@ -88,14 +90,17 @@ impl InitializeMint<'_> {
         })
     }
 
+    #[inline]
     pub fn decimals(&self) -> u8 {
         unsafe { *self.raw }
     }
 
+    #[inline]
     pub fn mint_authority(&self) -> &Pubkey {
         unsafe { &*(self.raw.add(1) as *const Pubkey) }
     }
 
+    #[inline]
     pub fn freeze_authority(&self) -> Option<&Pubkey> {
         unsafe {
             if *self.raw.add(33) == 0 {

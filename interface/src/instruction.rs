@@ -1,8 +1,8 @@
-//! Instruction types
+//! Instruction types.
 
-use pinocchio::pubkey::Pubkey;
+use pinocchio::{program_error::ProgramError, pubkey::Pubkey};
 
-use crate::state::PodCOption;
+use crate::{error::TokenError, state::PodCOption};
 
 /// Instructions supported by the token program.
 #[repr(C)]
@@ -482,7 +482,7 @@ pub enum TokenInstruction<'a> {
     // token/js/src/instructions/types.ts to maintain @solana/spl-token compatibility
 }
 
-/// Specifies the authority type for SetAuthority instructions
+/// Specifies the authority type for `SetAuthority` instructions
 #[repr(u8)]
 #[derive(Clone, Debug, PartialEq)]
 pub enum AuthorityType {
@@ -506,13 +506,13 @@ impl AuthorityType {
         }
     }
 
-    pub fn from(index: u8) -> Self {
+    pub fn from(index: u8) -> Result<Self, ProgramError> {
         match index {
-            0 => AuthorityType::MintTokens,
-            1 => AuthorityType::FreezeAccount,
-            2 => AuthorityType::AccountOwner,
-            3 => AuthorityType::CloseAccount,
-            _ => panic!("invalid authority type: {index}"),
+            0 => Ok(AuthorityType::MintTokens),
+            1 => Ok(AuthorityType::FreezeAccount),
+            2 => Ok(AuthorityType::AccountOwner),
+            3 => Ok(AuthorityType::CloseAccount),
+            _ => Err(TokenError::InvalidInstruction.into()),
         }
     }
 }

@@ -6,17 +6,12 @@ use pinocchio::{
     sysvars::{rent::Rent, Sysvar},
     ProgramResult,
 };
-use token_interface::{
-    error::TokenError,
-    native_mint::is_native_mint,
-    state::{
-        account::{Account, AccountState},
-        mint::Mint,
-        PodCOption,
-    },
-};
+use token_interface::{error::TokenError, native_mint::is_native_mint};
 
-use crate::processor::check_account_owner;
+use crate::{
+    processor::check_account_owner,
+    state::{account::Account, account_state::AccountState, mint::Mint},
+};
 
 #[inline(always)]
 pub fn process_initialize_account(
@@ -24,6 +19,8 @@ pub fn process_initialize_account(
     owner: Option<&Pubkey>,
     rent_sysvar_account: bool,
 ) -> ProgramResult {
+    // Accounts expected depend on whether we have the `rent_sysvar` account or not.
+
     let (new_account_info, mint_info, owner, remaning) = if let Some(owner) = owner {
         let [new_account_info, mint_info, remaning @ ..] = accounts else {
             return Err(ProgramError::NotEnoughAccountKeys);
@@ -50,9 +47,9 @@ pub fn process_initialize_account(
         return Err(TokenError::NotRentExempt.into());
     }
 
-    let account_data = unsafe { new_account_info.borrow_mut_data_unchecked() };
-    let account = bytemuck::try_from_bytes_mut::<Account>(account_data)
-        .map_err(|_error| ProgramError::InvalidAccountData)?;
+    // Initialize the account.
+
+    let account = unsafe { Account::from_bytes_mut(new_account_info.borrow_mut_data_unchecked()) };
 
     if account.is_initialized() {
         return Err(TokenError::AlreadyInUse.into());
@@ -63,38 +60,31 @@ pub fn process_initialize_account(
     if !is_native_mint {
         check_account_owner(mint_info)?;
 
-        let mint_data = unsafe { mint_info.borrow_data_unchecked() };
-        let mint = bytemuck::try_from_bytes::<Mint>(mint_data)
-            .map_err(|_error| ProgramError::InvalidAccountData)?;
+        let mint = unsafe { Mint::from_bytes(mint_info.borrow_data_unchecked()) };
 
-        if !bool::from(mint.is_initialized) {
+        if !mint.is_initialized() {
             return Err(TokenError::InvalidMint.into());
         }
     }
 
+    account.state = AccountState::Initialized;
     account.mint = *mint_info.key();
     account.owner = *owner;
-    account.close_authority.clear();
-    account.delegate.clear();
-    account.delegated_amount = 0u64.into();
-    account.state = AccountState::Initialized as u8;
 
     if is_native_mint {
         let rent = Rent::get()?;
         let rent_exempt_reserve = rent.minimum_balance(size_of::<Account>());
 
-        account.is_native = PodCOption::from(Some(rent_exempt_reserve.into()));
+        account.set_native(true);
         unsafe {
-            account.amount = new_account_info
-                .borrow_lamports_unchecked()
-                .checked_sub(rent_exempt_reserve)
-                .ok_or(TokenError::Overflow)?
-                .into()
+            account.set_amount(
+                new_account_info
+                    .borrow_lamports_unchecked()
+                    .checked_sub(rent_exempt_reserve)
+                    .ok_or(TokenError::Overflow)?,
+            );
         }
-    } else {
-        account.is_native.clear();
-        account.amount = 0u64.into();
-    };
+    }
 
     Ok(())
 }

@@ -1,5 +1,7 @@
 use pinocchio::{account_info::AccountInfo, program_error::ProgramError, ProgramResult};
-use token_interface::{error::TokenError, state::account::Account};
+use token_interface::error::TokenError;
+
+use crate::state::account::Account;
 
 use super::validate_owner;
 
@@ -9,10 +11,8 @@ pub fn process_revoke(accounts: &[AccountInfo], _instruction_data: &[u8]) -> Pro
         return Err(ProgramError::NotEnoughAccountKeys);
     };
 
-    let source_account = bytemuck::try_from_bytes_mut::<Account>(unsafe {
-        source_account_info.borrow_mut_data_unchecked()
-    })
-    .map_err(|_error| ProgramError::InvalidAccountData)?;
+    let source_account =
+        unsafe { Account::from_bytes_mut(source_account_info.borrow_mut_data_unchecked()) };
 
     if source_account.is_frozen() {
         return Err(TokenError::AccountFrozen.into());
@@ -20,8 +20,8 @@ pub fn process_revoke(accounts: &[AccountInfo], _instruction_data: &[u8]) -> Pro
 
     validate_owner(&source_account.owner, owner_info, remaning)?;
 
-    source_account.delegate.clear();
-    source_account.delegated_amount = 0.into();
+    source_account.clear_delegate();
+    source_account.set_delegated_amount(0);
 
     Ok(())
 }

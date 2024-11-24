@@ -1,11 +1,10 @@
 use pinocchio::{account_info::AccountInfo, program_error::ProgramError, ProgramResult};
-use token_interface::{
-    error::TokenError,
-    native_mint::is_native_mint,
+use token_interface::error::TokenError;
+
+use crate::{
+    processor::{check_account_owner, validate_owner},
     state::{account::Account, mint::Mint},
 };
-
-use crate::processor::{check_account_owner, validate_owner};
 
 #[inline(always)]
 pub fn process_mint_to(
@@ -17,17 +16,16 @@ pub fn process_mint_to(
         return Err(ProgramError::NotEnoughAccountKeys);
     };
 
-    // destination account
+    // Validates the destination account.
 
-    let account_data = unsafe { destination_account_info.borrow_mut_data_unchecked() };
-    let destination_account = bytemuck::try_from_bytes_mut::<Account>(account_data)
-        .map_err(|_error| ProgramError::InvalidAccountData)?;
+    let destination_account =
+        unsafe { Account::from_bytes_mut(destination_account_info.borrow_mut_data_unchecked()) };
 
     if destination_account.is_frozen() {
         return Err(TokenError::AccountFrozen.into());
     }
 
-    if is_native_mint(mint_info.key()) {
+    if destination_account.is_native() {
         return Err(TokenError::NativeNotSupported.into());
     }
 
@@ -35,9 +33,7 @@ pub fn process_mint_to(
         return Err(TokenError::MintMismatch.into());
     }
 
-    let mint_data = unsafe { mint_info.borrow_mut_data_unchecked() };
-    let mint = bytemuck::try_from_bytes_mut::<Mint>(mint_data)
-        .map_err(|_error| ProgramError::InvalidAccountData)?;
+    let mint = unsafe { Mint::from_bytes_mut(mint_info.borrow_mut_data_unchecked()) };
 
     if let Some(expected_decimals) = expected_decimals {
         if expected_decimals != mint.decimals {
@@ -45,8 +41,8 @@ pub fn process_mint_to(
         }
     }
 
-    match mint.mint_authority.get() {
-        Some(mint_authority) => validate_owner(&mint_authority, owner_info, remaining)?,
+    match mint.mint_authority() {
+        Some(mint_authority) => validate_owner(mint_authority, owner_info, remaining)?,
         None => return Err(TokenError::FixedSupply.into()),
     }
 
@@ -55,15 +51,17 @@ pub fn process_mint_to(
         check_account_owner(destination_account_info)?;
     }
 
-    let destination_amount = u64::from(destination_account.amount)
+    let destination_amount = destination_account
+        .amount()
         .checked_add(amount)
         .ok_or(ProgramError::InvalidAccountData)?;
-    destination_account.amount = destination_amount.into();
+    destination_account.set_amount(destination_amount);
 
-    let mint_supply = u64::from(mint.supply)
+    let mint_supply = mint
+        .supply()
         .checked_add(amount)
         .ok_or(ProgramError::InvalidAccountData)?;
-    mint.supply = mint_supply.into();
+    mint.set_supply(mint_supply);
 
     Ok(())
 }

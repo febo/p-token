@@ -4,7 +4,9 @@ use pinocchio::{
     sysvars::{rent::Rent, Sysvar},
     ProgramResult,
 };
-use token_interface::{error::TokenError, state::multisig::Multisig};
+use token_interface::error::TokenError;
+
+use crate::state::multisig::Multisig;
 
 #[inline(always)]
 pub fn process_initialize_multisig(
@@ -12,6 +14,8 @@ pub fn process_initialize_multisig(
     m: u8,
     rent_sysvar_account: bool,
 ) -> ProgramResult {
+    // Accounts expected depend on whether we have the `rent_sysvar` account or not.
+
     let (multisig_info, rent_sysvar_info, remaining) = if rent_sysvar_account {
         let [multisig_info, rent_sysvar_info, remaining @ ..] = accounts else {
             return Err(ProgramError::NotEnoughAccountKeys);
@@ -37,14 +41,13 @@ pub fn process_initialize_multisig(
         return Err(TokenError::NotRentExempt.into());
     }
 
-    let multisig = bytemuck::try_from_bytes_mut::<Multisig>(unsafe {
-        multisig_info.borrow_mut_data_unchecked()
-    })
-    .map_err(|_error| ProgramError::InvalidAccountData)?;
+    let multisig = unsafe { Multisig::from_bytes_mut(multisig_info.borrow_mut_data_unchecked()) };
 
-    if multisig.is_initialized.into() {
+    if multisig.is_initialized() {
         return Err(TokenError::AlreadyInUse.into());
     }
+
+    // Initialize the multisig account.
 
     multisig.m = m;
     multisig.n = remaining.len() as u8;
@@ -55,10 +58,12 @@ pub fn process_initialize_multisig(
     if !Multisig::is_valid_signer_index(multisig.m as usize) {
         return Err(TokenError::InvalidNumberOfRequiredSigners.into());
     }
+
     for (i, signer_info) in remaining.iter().enumerate() {
         multisig.signers[i] = *signer_info.key();
     }
-    multisig.is_initialized = true.into();
+
+    multisig.set_initialized(true);
 
     Ok(())
 }
