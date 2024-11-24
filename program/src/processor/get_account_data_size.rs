@@ -1,8 +1,7 @@
 use pinocchio::{
     account_info::AccountInfo, program::set_return_data, program_error::ProgramError, ProgramResult,
 };
-
-use crate::state::{account::Account, mint::Mint};
+use token_interface::state::{account::Account, mint::Mint};
 
 use super::check_account_owner;
 

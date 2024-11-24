@@ -1,10 +1,10 @@
 use pinocchio::{account_info::AccountInfo, program_error::ProgramError, ProgramResult};
-use token_interface::error::TokenError;
-
-use crate::{
-    processor::{check_account_owner, validate_owner},
+use token_interface::{
+    error::TokenError,
     state::{account::Account, mint::Mint},
 };
+
+use crate::processor::{check_account_owner, validate_owner};
 
 #[inline(always)]
 pub fn process_transfer(

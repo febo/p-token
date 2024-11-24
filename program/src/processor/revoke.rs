@@ -1,7 +1,5 @@
 use pinocchio::{account_info::AccountInfo, program_error::ProgramError, ProgramResult};
-use token_interface::error::TokenError;
-
-use crate::state::account::Account;
+use token_interface::{error::TokenError, state::account::Account};
 
 use super::validate_owner;
 

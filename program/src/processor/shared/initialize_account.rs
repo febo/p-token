@@ -6,12 +6,13 @@ use pinocchio::{
     sysvars::{rent::Rent, Sysvar},
     ProgramResult,
 };
-use token_interface::{error::TokenError, native_mint::is_native_mint};
-
-use crate::{
-    processor::check_account_owner,
+use token_interface::{
+    error::TokenError,
+    native_mint::is_native_mint,
     state::{account::Account, account_state::AccountState, mint::Mint},
 };
+
+use crate::processor::check_account_owner;
 
 #[inline(always)]
 pub fn process_initialize_account(

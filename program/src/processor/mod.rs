@@ -1,7 +1,10 @@
 use pinocchio::{
     account_info::AccountInfo, program_error::ProgramError, pubkey::Pubkey, ProgramResult,
 };
-use token_interface::error::TokenError;
+use token_interface::{
+    error::TokenError,
+    state::multisig::{Multisig, MAX_SIGNERS},
+};
 
 pub mod amount_to_ui_amount;
 pub mod approve;
@@ -56,8 +59,6 @@ pub use thaw_account::process_thaw_account;
 pub use transfer::process_transfer;
 pub use transfer_checked::process_transfer_checked;
 pub use ui_amount_to_amount::process_ui_amount_to_amount;
-
-use crate::state::multisig::{Multisig, MAX_SIGNERS};
 
 /// Incinerator address.
 const INCINERATOR_ID: Pubkey =

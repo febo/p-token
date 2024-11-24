@@ -4,9 +4,7 @@ use pinocchio::{
     sysvars::{rent::Rent, Sysvar},
     ProgramResult,
 };
-use token_interface::error::TokenError;
-
-use crate::state::multisig::Multisig;
+use token_interface::{error::TokenError, state::multisig::Multisig};
 
 #[inline(always)]
 pub fn process_initialize_multisig(

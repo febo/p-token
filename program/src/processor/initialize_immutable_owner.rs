@@ -1,7 +1,5 @@
 use pinocchio::{account_info::AccountInfo, msg, program_error::ProgramError, ProgramResult};
-use token_interface::error::TokenError;
-
-use crate::state::account::Account;
+use token_interface::{error::TokenError, state::account::Account};
 
 #[inline(always)]
 pub fn process_initialize_immutable_owner(accounts: &[AccountInfo]) -> ProgramResult {

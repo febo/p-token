@@ -3,9 +3,11 @@ use core::marker::PhantomData;
 use pinocchio::{
     account_info::AccountInfo, program_error::ProgramError, pubkey::Pubkey, ProgramResult,
 };
-use token_interface::{error::TokenError, instruction::AuthorityType};
-
-use crate::state::{account::Account, mint::Mint};
+use token_interface::{
+    error::TokenError,
+    instruction::AuthorityType,
+    state::{account::Account, mint::Mint},
+};
 
 use super::validate_owner;
 

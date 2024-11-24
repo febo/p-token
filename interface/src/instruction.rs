@@ -2,7 +2,7 @@
 
 use pinocchio::{program_error::ProgramError, pubkey::Pubkey};
 
-use crate::{error::TokenError, state::PodCOption};
+use crate::error::TokenError;
 
 /// Instructions supported by the token program.
 #[repr(C)]
@@ -27,7 +27,7 @@ pub enum TokenInstruction<'a> {
         /// The authority/multisignature to mint tokens.
         mint_authority: Pubkey,
         /// The freeze authority/multisignature of the mint.
-        freeze_authority: PodCOption<Pubkey>,
+        freeze_authority: Option<Pubkey>,
     },
 
     /// Initializes a new account to hold tokens.  If this account is associated
@@ -147,7 +147,7 @@ pub enum TokenInstruction<'a> {
         /// The type of authority to update.
         authority_type: AuthorityType,
         /// The new authority
-        new_authority: PodCOption<Pubkey>,
+        new_authority: Option<Pubkey>,
     },
 
     /// Mints new tokens to an account.  The native mint does not support
@@ -416,7 +416,7 @@ pub enum TokenInstruction<'a> {
         /// The authority/multisignature to mint tokens.
         mint_authority: Pubkey,
         /// The freeze authority/multisignature of the mint.
-        freeze_authority: PodCOption<Pubkey>,
+        freeze_authority: Option<Pubkey>,
     },
 
     /// Gets the required size of an account for the given mint as a

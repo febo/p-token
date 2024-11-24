@@ -6,9 +6,7 @@ use pinocchio::{
     sysvars::{rent::Rent, Sysvar},
     ProgramResult,
 };
-use token_interface::error::TokenError;
-
-use crate::state::mint::Mint;
+use token_interface::{error::TokenError, state::mint::Mint};
 
 #[inline(always)]
 pub fn process_initialize_mint(

@@ -1,7 +1,5 @@
 use pinocchio::{account_info::AccountInfo, program_error::ProgramError, ProgramResult};
-use token_interface::error::TokenError;
-
-use crate::state::account::Account;
+use token_interface::{error::TokenError, state::account::Account};
 
 use super::{is_owned_by_system_program_or_incinerator, validate_owner, INCINERATOR_ID};
 
