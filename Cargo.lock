@@ -5206,7 +5206,6 @@ checksum = "1f3ccbac311fea05f86f61904b462b55fb3df8837a366dfc601a0161d0532f20"
 name = "token-interface"
 version = "0.0.0"
 dependencies = [
- "bytemuck",
  "pinocchio",
  "pinocchio-pubkey",
 ]
@@ -5216,7 +5215,6 @@ name = "token-program"
 version = "0.0.0"
 dependencies = [
  "assert_matches",
- "bytemuck",
  "pinocchio",
  "pinocchio-pubkey",
  "solana-program-test",
