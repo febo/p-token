@@ -20,9 +20,9 @@ This repository contains a **proof-of-concept** of a reimplementation of the SPL
 
 | Instruction                | Completed | CU (`p-token`) | CU (`spl-token`) |
 |----------------------------|-----------|----------------|------------------|
-| `InitializeMint`           | ✅        | 343            | 2967             |
-| `InitializeAccount`        | ✅        | 416            | 4527             |
-| `InitializeMultisig`       | ✅        | 499            | 2973             |
+| `InitializeMint`           | ✅        | 97             | 2967             |
+| `InitializeAccount`        | ✅        | 175            | 4527             |
+| `InitializeMultisig`       | ✅        | 207            | 2973             |
 | `Transfer`                 | ✅        | 140            | 4645             |
 | `Approve`                  | ✅        | 133            | 2904             |
 | `Revoke`                   | ✅        | 106            | 2677             |
@@ -36,11 +36,11 @@ This repository contains a **proof-of-concept** of a reimplementation of the SPL
 | `ApproveChecked`           | ✅        | 169            | 4459             |
 | `MintToChecked`            | ✅        | 178            | 4546             |
 | `BurnChecked`              | ✅        | 181            | 4755             |
-| `InitializeAccount2`       | ✅        | 399            | 4388             |
+| `InitializeAccount2`       | ✅        | 157            | 4388             |
 | `SyncNative`               | ✅        |                |                  |
-| `InitializeAccount3`       | ✅        | 508            | 4240             |
-| `InitializeMultisig2`      | ✅        | 579            | 2826             |
-| `InitializeMint2`          | ✅        | 477            | 2827             |
+| `InitializeAccount3`       | ✅        | 264            | 4240             |
+| `InitializeMultisig2`      | ✅        | 340            | 2826             |
+| `InitializeMint2`          | ✅        | 231            | 2827             |
 | `GetAccountDataSize`       | ✅        |                |                  |
 | `InitializeImmutableOwner` | ✅        |                |                  |
 | `AmountToUiAmount`         | ✅        |                |                  |
