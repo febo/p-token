@@ -16,4 +16,5 @@ repository = "https://github.com/febo/token"
 
 [workspace.dependencies]
 pinocchio = { git = "https://github.com/febo/pinocchio.git", branch = "febo/log-arguments" }
+pinocchio-log = { git = "https://github.com/febo/pinocchio.git", branch = "febo/log-arguments" }
 pinocchio-pubkey = { git = "https://github.com/febo/pinocchio.git", branch = "febo/log-arguments" }

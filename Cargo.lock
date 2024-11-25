@@ -2613,6 +2613,23 @@ version = "0.6.0"
 source = "git+https://github.com/febo/pinocchio.git?branch=febo/log-arguments#0bd25aa5ed5deeae7d9772a670b8333378e1ce96"
 
 [[package]]
+name = "pinocchio-log"
+version = "0.1.0"
+source = "git+https://github.com/febo/pinocchio.git?branch=febo/log-arguments#0bd25aa5ed5deeae7d9772a670b8333378e1ce96"
+dependencies = [
+ "pinocchio-log-macro",
+]
+
+[[package]]
+name = "pinocchio-log-macro"
+version = "0.1.0"
+source = "git+https://github.com/febo/pinocchio.git?branch=febo/log-arguments#0bd25aa5ed5deeae7d9772a670b8333378e1ce96"
+dependencies = [
+ "quote",
+ "syn 1.0.109",
+]
+
+[[package]]
 name = "pinocchio-pubkey"
 version = "0.2.1"
 source = "git+https://github.com/febo/pinocchio.git?branch=febo/log-arguments#0bd25aa5ed5deeae7d9772a670b8333378e1ce96"
@@ -5216,6 +5233,7 @@ version = "0.0.0"
 dependencies = [
  "assert_matches",
  "pinocchio",
+ "pinocchio-log",
  "pinocchio-pubkey",
  "solana-program-test",
  "solana-sdk",
