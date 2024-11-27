@@ -20,9 +20,9 @@ This repository contains a **proof-of-concept** of a reimplementation of the SPL
 
 | Instruction                | Completed | CU (`p-token`) | CU (`spl-token`) |
 |----------------------------|-----------|----------------|------------------|
-| `InitializeMint`           | ✅        | 97             | 2967             |
-| `InitializeAccount`        | ✅        | 175            | 4527             |
-| `InitializeMultisig`       | ✅        | 207            | 2973             |
+| `InitializeMint`           | ✅        | 98             | 2967             |
+| `InitializeAccount`        | ✅        | 161            | 4527             |
+| `InitializeMultisig`       | ✅        | 188            | 2973             |
 | `Transfer`                 | ✅        | 140            | 4645             |
 | `Approve`                  | ✅        | 133            | 2904             |
 | `Revoke`                   | ✅        | 106            | 2677             |
@@ -43,8 +43,8 @@ This repository contains a **proof-of-concept** of a reimplementation of the SPL
 | `InitializeMint2`          | ✅        | 231            | 2827             |
 | `GetAccountDataSize`       | ✅        |                |                  |
 | `InitializeImmutableOwner` | ✅        |                |                  |
-| `AmountToUiAmount`         | ✅        |                |                  |
-| `UiAmountToAmount`         | ✅        |                |                  |
+| `AmountToUiAmount`         | ✅        | 477            | 1913             |
+| `UiAmountToAmount`         | ✅        | 773            | 2680             |
 
 > Tests were run using Solana `v2.1.0`.
 
