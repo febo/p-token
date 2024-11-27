@@ -2610,12 +2610,12 @@ checksum = "8b870d8c151b6f2fb93e84a13146138f05d02ed11c7e7c54f8826aaaf7c9f184"
 [[package]]
 name = "pinocchio"
 version = "0.6.0"
-source = "git+https://github.com/febo/pinocchio.git?branch=febo/log-arguments#1d6ddd1672085e02f35706485263612272322353"
+source = "git+https://github.com/febo/pinocchio.git?branch=crate-features#0faa06864e9f31930313830b79594745901e0208"
 
 [[package]]
 name = "pinocchio-log"
 version = "0.1.0"
-source = "git+https://github.com/febo/pinocchio.git?branch=febo/log-arguments#1d6ddd1672085e02f35706485263612272322353"
+source = "git+https://github.com/febo/pinocchio.git?branch=crate-features#0faa06864e9f31930313830b79594745901e0208"
 dependencies = [
  "pinocchio-log-macro",
 ]
@@ -2623,7 +2623,7 @@ dependencies = [
 [[package]]
 name = "pinocchio-log-macro"
 version = "0.1.0"
-source = "git+https://github.com/febo/pinocchio.git?branch=febo/log-arguments#1d6ddd1672085e02f35706485263612272322353"
+source = "git+https://github.com/febo/pinocchio.git?branch=crate-features#0faa06864e9f31930313830b79594745901e0208"
 dependencies = [
  "quote",
  "syn 1.0.109",
@@ -2632,7 +2632,7 @@ dependencies = [
 [[package]]
 name = "pinocchio-pubkey"
 version = "0.2.1"
-source = "git+https://github.com/febo/pinocchio.git?branch=febo/log-arguments#1d6ddd1672085e02f35706485263612272322353"
+source = "git+https://github.com/febo/pinocchio.git?branch=crate-features#0faa06864e9f31930313830b79594745901e0208"
 dependencies = [
  "five8_const",
  "pinocchio",
