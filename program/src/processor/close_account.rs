@@ -3,7 +3,7 @@ use pinocchio::{
 };
 use token_interface::{
     error::TokenError,
-    state::{account::Account, Viewable},
+    state::{account::Account, load_mut},
 };
 
 use super::validate_owner;
@@ -27,7 +27,7 @@ pub fn process_close_account(accounts: &[AccountInfo]) -> ProgramResult {
     }
 
     let source_account =
-        unsafe { Account::load_mut(source_account_info.borrow_mut_data_unchecked())? };
+        unsafe { load_mut::<Account>(source_account_info.borrow_mut_data_unchecked())? };
 
     if !source_account.is_native() && source_account.amount() != 0 {
         return Err(TokenError::NonNativeHasBalance.into());

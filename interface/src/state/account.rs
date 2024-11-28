@@ -1,6 +1,6 @@
 use pinocchio::pubkey::Pubkey;
 
-use super::{account_state::AccountState, COption, Initializable, RawType, Viewable};
+use super::{account_state::AccountState, COption, Initializable, RawType};
 
 /// Incinerator address.
 const INCINERATOR_ID: Pubkey =
@@ -145,5 +145,3 @@ impl Initializable for Account {
         self.state != AccountState::Uninitialized
     }
 }
-
-impl Viewable<Account> for Account {}

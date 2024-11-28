@@ -11,8 +11,9 @@ use pinocchio::{
 use token_interface::{
     error::TokenError,
     state::{
+        load,
         multisig::{Multisig, MAX_SIGNERS},
-        RawType, Viewable,
+        RawType,
     },
 };
 
@@ -98,7 +99,7 @@ fn validate_owner(
     }
 
     if owner_account_info.data_len() == Multisig::LEN && &crate::ID != owner_account_info.owner() {
-        let multisig = unsafe { Multisig::load(owner_account_info.borrow_data_unchecked())? };
+        let multisig = unsafe { load::<Multisig>(owner_account_info.borrow_data_unchecked())? };
 
         let mut num_signers = 0;
         let mut matched = [false; MAX_SIGNERS];

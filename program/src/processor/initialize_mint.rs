@@ -8,7 +8,7 @@ use pinocchio::{
 };
 use token_interface::{
     error::TokenError,
-    state::{mint::Mint, Initializable, Viewable},
+    state::{load_mut_unchecked, mint::Mint, Initializable},
 };
 
 #[inline(always)]
@@ -35,7 +35,7 @@ pub fn process_initialize_mint(
         (mint_info, None)
     };
 
-    let mint = unsafe { Mint::load_mut_unchecked(mint_info.borrow_mut_data_unchecked())? };
+    let mint = unsafe { load_mut_unchecked::<Mint>(mint_info.borrow_mut_data_unchecked())? };
 
     if mint.is_initialized() {
         return Err(TokenError::AlreadyInUse.into());

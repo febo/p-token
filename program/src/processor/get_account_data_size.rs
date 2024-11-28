@@ -3,7 +3,7 @@ use pinocchio::{
 };
 use token_interface::{
     error::TokenError,
-    state::{account::Account, mint::Mint, RawType, Viewable},
+    state::{account::Account, load, mint::Mint, RawType},
 };
 
 use super::check_account_owner;
@@ -18,7 +18,7 @@ pub fn process_get_account_data_size(accounts: &[AccountInfo]) -> ProgramResult 
     check_account_owner(mint_info)?;
 
     let _ = unsafe {
-        Mint::load(mint_info.borrow_data_unchecked()).map_err(|_| TokenError::InvalidMint)
+        load::<Mint>(mint_info.borrow_data_unchecked()).map_err(|_| TokenError::InvalidMint)
     };
 
     set_return_data(&Account::LEN.to_le_bytes());

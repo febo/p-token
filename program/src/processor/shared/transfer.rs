@@ -1,7 +1,7 @@
 use pinocchio::{account_info::AccountInfo, program_error::ProgramError, ProgramResult};
 use token_interface::{
     error::TokenError,
-    state::{account::Account, mint::Mint, Viewable},
+    state::{account::Account, load, load_mut, mint::Mint},
 };
 
 use crate::processor::{check_account_owner, validate_owner};
@@ -52,10 +52,10 @@ pub fn process_transfer(
     // Validates source and destination accounts.
 
     let source_account =
-        unsafe { Account::load_mut(source_account_info.borrow_mut_data_unchecked())? };
+        unsafe { load_mut::<Account>(source_account_info.borrow_mut_data_unchecked())? };
 
     let destination_account =
-        unsafe { Account::load_mut(destination_account_info.borrow_mut_data_unchecked())? };
+        unsafe { load_mut::<Account>(destination_account_info.borrow_mut_data_unchecked())? };
 
     if source_account.is_frozen() || destination_account.is_frozen() {
         return Err(TokenError::AccountFrozen.into());
@@ -80,7 +80,7 @@ pub fn process_transfer(
             return Err(TokenError::MintMismatch.into());
         }
 
-        let mint = unsafe { Mint::load(mint_info.borrow_data_unchecked())? };
+        let mint = unsafe { load::<Mint>(mint_info.borrow_data_unchecked())? };
 
         if decimals != mint.decimals {
             return Err(TokenError::MintDecimalsMismatch.into());

@@ -5,7 +5,7 @@ use pinocchio::{
 use pinocchio_log::logger::{Argument, Logger};
 use token_interface::{
     error::TokenError,
-    state::{mint::Mint, Viewable},
+    state::{load, mint::Mint},
 };
 
 use super::{check_account_owner, MAX_DIGITS_U64};
@@ -31,7 +31,7 @@ pub fn process_amount_to_ui_amount(
     check_account_owner(mint_info)?;
     // SAFETY: there is a single borrow to the `Mint` account.
     let mint = unsafe {
-        Mint::load(mint_info.borrow_data_unchecked()).map_err(|_| TokenError::InvalidMint)?
+        load::<Mint>(mint_info.borrow_data_unchecked()).map_err(|_| TokenError::InvalidMint)?
     };
 
     let mut logger = Logger::<MAX_UI_AMOUNT_LENGTH>::default();

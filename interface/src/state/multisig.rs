@@ -1,6 +1,6 @@
 use pinocchio::pubkey::Pubkey;
 
-use super::{Initializable, RawType, Viewable};
+use super::{Initializable, RawType};
 
 /// Minimum number of multisignature signers (min N)
 pub const MIN_SIGNERS: usize = 1;
@@ -47,5 +47,3 @@ impl Initializable for Multisig {
         self.is_initialized == 1
     }
 }
-
-impl Viewable<Multisig> for Multisig {}

@@ -6,7 +6,7 @@ use pinocchio::{
 };
 use token_interface::{
     error::TokenError,
-    state::{multisig::Multisig, Initializable, Viewable},
+    state::{load_mut_unchecked, multisig::Multisig, Initializable},
 };
 
 #[inline(always)]
@@ -39,7 +39,7 @@ pub fn process_initialize_multisig(
     };
 
     let multisig =
-        unsafe { Multisig::load_mut_unchecked(multisig_info.borrow_mut_data_unchecked())? };
+        unsafe { load_mut_unchecked::<Multisig>(multisig_info.borrow_mut_data_unchecked())? };
 
     if multisig.is_initialized() {
         return Err(TokenError::AlreadyInUse.into());

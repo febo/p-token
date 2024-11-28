@@ -1,6 +1,6 @@
 use pinocchio::pubkey::Pubkey;
 
-use super::{COption, Initializable, RawType, Viewable};
+use super::{COption, Initializable, RawType};
 
 /// Internal representation of a mint data.
 #[repr(C)]
@@ -94,5 +94,3 @@ impl Initializable for Mint {
         self.is_initialized == 1
     }
 }
-
-impl Viewable<Mint> for Mint {}

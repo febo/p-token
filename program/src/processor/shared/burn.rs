@@ -1,7 +1,7 @@
 use pinocchio::{account_info::AccountInfo, program_error::ProgramError, ProgramResult};
 use token_interface::{
     error::TokenError,
-    state::{account::Account, mint::Mint, Viewable},
+    state::{account::Account, load_mut, mint::Mint},
 };
 
 use crate::processor::{check_account_owner, validate_owner};
@@ -17,7 +17,7 @@ pub fn process_burn(
     };
 
     let source_account =
-        unsafe { Account::load_mut(source_account_info.borrow_mut_data_unchecked())? };
+        unsafe { load_mut::<Account>(source_account_info.borrow_mut_data_unchecked())? };
 
     if source_account.is_frozen() {
         return Err(TokenError::AccountFrozen.into());
@@ -33,7 +33,7 @@ pub fn process_burn(
         .checked_sub(amount)
         .ok_or(TokenError::InsufficientFunds)?;
 
-    let mint = unsafe { Mint::load_mut(mint_info.borrow_mut_data_unchecked())? };
+    let mint = unsafe { load_mut::<Mint>(mint_info.borrow_mut_data_unchecked())? };
 
     if mint_info.key() != &source_account.mint {
         return Err(TokenError::MintMismatch.into());

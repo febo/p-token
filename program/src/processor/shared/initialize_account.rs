@@ -8,7 +8,10 @@ use pinocchio::{
 use token_interface::{
     error::TokenError,
     native_mint::is_native_mint,
-    state::{account::Account, account_state::AccountState, mint::Mint, Initializable, Viewable},
+    state::{
+        account::Account, account_state::AccountState, load, load_mut_unchecked, mint::Mint,
+        Initializable,
+    },
 };
 
 use crate::processor::check_account_owner;
@@ -50,7 +53,7 @@ pub fn process_initialize_account(
     // Initialize the account.
 
     let account =
-        unsafe { Account::load_mut_unchecked(new_account_info.borrow_mut_data_unchecked())? };
+        unsafe { load_mut_unchecked::<Account>(new_account_info.borrow_mut_data_unchecked())? };
 
     if account.is_initialized() {
         return Err(TokenError::AlreadyInUse.into());
@@ -64,7 +67,7 @@ pub fn process_initialize_account(
         check_account_owner(mint_info)?;
 
         let _ = unsafe {
-            Mint::load(mint_info.borrow_data_unchecked()).map_err(|_| TokenError::InvalidMint)?
+            load::<Mint>(mint_info.borrow_data_unchecked()).map_err(|_| TokenError::InvalidMint)?
         };
     }
 
