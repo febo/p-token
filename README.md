@@ -16,7 +16,20 @@
 
 This repository contains a **proof-of-concept** of a reimplementation of the SPL Token program, one of the most used programs on Solana, using [`pinocchio`](https://github.com/febo/pinocchio). The purpose is to have an implementation that optimizes the compute units, while being fully compatible with the original implementation &mdash; i.e., support the exact same instruction and account layouts as SPL Token, byte for byte.
 
+## Features
+
+- `no_std` crate
+- Same instruction and account layout as SPL Token
+- Minimal CU usage
+
 ## Status
+
+- [x] Account and Mint
+- [x] Instructions
+- [x] Basic instruction tests
+- [ ] Existing SPL Token tests
+
+## Compute Units
 
 | Instruction                | Completed | CU (`p-token`) | CU (`spl-token`) |
 |----------------------------|-----------|----------------|------------------|
