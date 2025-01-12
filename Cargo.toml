@@ -15,6 +15,6 @@ license = "Apache-2.0"
 repository = "https://github.com/febo/token"
 
 [workspace.dependencies]
-pinocchio = { git = "https://github.com/febo/pinocchio.git", branch = "febo/program-entrypoint" }
-pinocchio-log = { git = "https://github.com/febo/pinocchio.git", branch = "febo/program-entrypoint" }
-pinocchio-pubkey = { git = "https://github.com/febo/pinocchio.git", branch = "febo/program-entrypoint" }
+pinocchio = "0.7.0"
+pinocchio-log = "0.3.0"
+pinocchio-pubkey = "0.2.2"
