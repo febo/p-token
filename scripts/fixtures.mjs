@@ -47,7 +47,7 @@ async function run(args) {
         // TODO: this can be removed once the mollusk checks PR is merged.
         await $`git switch febo/mollusk-checks`;
         
-        await $`EJECT_FUZZ_FIXTURES=${FIXTURES_DIR} cargo test-sbf --features mollusk-svm/fuzz --test processor`;
+        await $`EJECT_FUZZ_FIXTURES=${FIXTURES_DIR} cargo test-sbf --features mollusk-svm/fuzz`;
     }
 
     cd(workingDirectory);
