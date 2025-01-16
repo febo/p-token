@@ -16,7 +16,9 @@ pub fn process_get_account_data_size(accounts: &[AccountInfo]) -> ProgramResult 
 
     // Make sure the mint is valid.
     check_account_owner(mint_info)?;
-
+    // SAFETY: there is a single immutable borrow of the `Mint` account data.
+    //
+    // The `Mint` account is loaded to check if it is initialized.
     let _ = unsafe {
         load::<Mint>(mint_info.borrow_data_unchecked()).map_err(|_| TokenError::InvalidMint)?
     };

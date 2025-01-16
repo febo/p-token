@@ -11,7 +11,7 @@ pub fn process_sync_native(accounts: &[AccountInfo]) -> ProgramResult {
     let native_account_info = accounts.first().ok_or(ProgramError::NotEnoughAccountKeys)?;
 
     check_account_owner(native_account_info)?;
-
+    // SAFETY: there are no other active borrows to the `native_account_info` data.
     let native_account =
         unsafe { load_mut::<Account>(native_account_info.borrow_mut_data_unchecked())? };
 

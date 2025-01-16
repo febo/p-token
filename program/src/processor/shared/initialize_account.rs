@@ -42,7 +42,9 @@ pub fn process_initialize_account(
 
     let minimum_balance = if rent_sysvar_account {
         let rent_sysvar_info = remaning.first().ok_or(ProgramError::NotEnoughAccountKeys)?;
-        let rent = unsafe { Rent::from_bytes(rent_sysvar_info.borrow_data_unchecked())? };
+        // SAFETY: there is a single immutable borrow to `rent_sysvar_info`. The account
+        // ID and length is checked by `from_account_info_unchecked`.
+        let rent = unsafe { Rent::from_account_info_unchecked(rent_sysvar_info)? };
         rent.minimum_balance(new_account_info_data_len)
     } else {
         Rent::get()?.minimum_balance(new_account_info_data_len)
@@ -52,6 +54,7 @@ pub fn process_initialize_account(
 
     // Initialize the account.
 
+    // SAFETY: there is a single mutable borrow of the 'new_account_info' account data.
     let account =
         unsafe { load_mut_unchecked::<Account>(new_account_info.borrow_mut_data_unchecked())? };
 
@@ -66,6 +69,8 @@ pub fn process_initialize_account(
     if !is_native_mint {
         check_account_owner(mint_info)?;
 
+        // SAFETY: there is a single immutable borrow of the 'mint_info' account data. The 'mint_info'
+        // is guaranteed to be different than 'new_account_info' since there is a length check on `load`.
         let _ = unsafe {
             load::<Mint>(mint_info.borrow_data_unchecked()).map_err(|_| TokenError::InvalidMint)?
         };

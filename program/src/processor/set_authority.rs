@@ -27,6 +27,7 @@ pub fn process_set_authority(accounts: &[AccountInfo], instruction_data: &[u8]) 
     };
 
     if account_info.data_len() == Account::LEN {
+        // SAFETY: there are no other active borrows of the `account` data.
         let account = unsafe { load_mut::<Account>(account_info.borrow_mut_data_unchecked())? };
 
         if account.is_frozen() {
@@ -35,6 +36,7 @@ pub fn process_set_authority(accounts: &[AccountInfo], instruction_data: &[u8]) 
 
         match authority_type {
             AuthorityType::AccountOwner => {
+                // TODO: Can account and authority be the same?
                 validate_owner(&account.owner, authority_info, remaning)?;
 
                 if let Some(authority) = new_authority {
@@ -52,6 +54,7 @@ pub fn process_set_authority(accounts: &[AccountInfo], instruction_data: &[u8]) 
             }
             AuthorityType::CloseAccount => {
                 let authority = account.close_authority().unwrap_or(&account.owner);
+                // TODO: Can account and authority be the same?
                 validate_owner(authority, authority_info, remaning)?;
 
                 if let Some(authority) = new_authority {
@@ -65,6 +68,7 @@ pub fn process_set_authority(accounts: &[AccountInfo], instruction_data: &[u8]) 
             }
         }
     } else if account_info.data_len() == Mint::LEN {
+        // SAFETY: there are no other active borrows of the `account` data.
         let mint = unsafe { load_mut::<Mint>(account_info.borrow_mut_data_unchecked())? };
 
         match authority_type {
@@ -72,7 +76,7 @@ pub fn process_set_authority(accounts: &[AccountInfo], instruction_data: &[u8]) 
                 // Once a mint's supply is fixed, it cannot be undone by setting a new
                 // mint_authority.
                 let mint_authority = mint.mint_authority().ok_or(TokenError::FixedSupply)?;
-
+                // TODO: Can account and authority be the same?
                 validate_owner(mint_authority, authority_info, remaning)?;
 
                 if let Some(authority) = new_authority {
@@ -87,7 +91,7 @@ pub fn process_set_authority(accounts: &[AccountInfo], instruction_data: &[u8]) 
                 let freeze_authority = mint
                     .freeze_authority()
                     .ok_or(TokenError::MintCannotFreeze)?;
-
+                // TODO: Can account and authority be the same?
                 validate_owner(freeze_authority, authority_info, remaning)?;
 
                 if let Some(authority) = new_authority {

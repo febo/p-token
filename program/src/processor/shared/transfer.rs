@@ -1,7 +1,7 @@
 use pinocchio::{account_info::AccountInfo, program_error::ProgramError, ProgramResult};
 use token_interface::{
     error::TokenError,
-    state::{account::Account, load, load_mut, mint::Mint},
+    state::{account::Account, load, load_mut_unchecked, mint::Mint},
 };
 
 use crate::processor::{check_account_owner, validate_owner};
@@ -51,66 +51,93 @@ pub fn process_transfer(
 
     // Validates source and destination accounts.
 
-    let source_account =
-        unsafe { load_mut::<Account>(source_account_info.borrow_mut_data_unchecked())? };
+    let (self_transfer, remaining_amount, delegated_amount) = {
+        // SAFETY: scoped immutable borrow of `source_account_info` account data. When
+        // `authority_info` is the same as `source_account_info`, there will be another immutable
+        // borrow in `validate_owner` – this is safe because both borrows are immutable.
+        let source_account =
+            unsafe { load::<Account>(source_account_info.borrow_data_unchecked())? };
 
-    let destination_account =
-        unsafe { load_mut::<Account>(destination_account_info.borrow_mut_data_unchecked())? };
+        // Comparing whether the AccountInfo's "point" to the same account or
+        // not - this is a faster comparison since it just checks the internal
+        // raw pointer.
+        let self_transfer = source_account_info == destination_account_info;
 
-    if source_account.is_frozen() || destination_account.is_frozen() {
-        return Err(TokenError::AccountFrozen.into());
-    }
+        // Checks if any of the accounts is frozen and their mint matches.
+        let (is_frozen, mint_matches) = if self_transfer {
+            (source_account.is_frozen(), true)
+        } else {
+            // SAFETY: scoped immutable borrow of `destination_account_info` account data.
+            let destination =
+                unsafe { load::<Account>(destination_account_info.borrow_data_unchecked())? };
+            (
+                source_account.is_frozen() || destination.is_frozen(),
+                source_account.mint == destination.mint,
+            )
+        };
 
-    // Implicitly validates that the account has enough tokens by calculating the
-    // remaining amount - the amount is only updated on the account if the transfer
-    // is successful.
-    let remaining_amount = source_account
-        .amount()
-        .checked_sub(amount)
-        .ok_or(TokenError::InsufficientFunds)?;
-
-    if source_account.mint != destination_account.mint {
-        return Err(TokenError::MintMismatch.into());
-    }
-
-    // Validates the mint information.
-
-    if let Some((mint_info, decimals)) = expected_mint_info {
-        if mint_info.key() != &source_account.mint {
-            return Err(TokenError::MintMismatch.into());
+        if is_frozen {
+            return Err(TokenError::AccountFrozen.into());
         }
 
-        let mint = unsafe { load::<Mint>(mint_info.borrow_data_unchecked())? };
-
-        if decimals != mint.decimals {
-            return Err(TokenError::MintDecimalsMismatch.into());
-        }
-    }
-
-    // Comparing whether the AccountInfo's "point" to the same account or
-    // not - this is a faster comparison since it just checks the internal
-    // raw pointer.
-    let self_transfer = source_account_info == destination_account_info;
-
-    // Validates the authority (delegate or owner).
-
-    if source_account.delegate() == Some(authority_info.key()) {
-        validate_owner(authority_info.key(), authority_info, remaning)?;
-
-        let delegated_amount = source_account
-            .delegated_amount()
+        // Implicitly validates that the account has enough tokens by calculating the
+        // remaining amount - the amount is only updated on the account if the transfer
+        // is successful.
+        let remaining_amount = source_account
+            .amount()
             .checked_sub(amount)
             .ok_or(TokenError::InsufficientFunds)?;
 
-        if !self_transfer {
-            source_account.set_delegated_amount(delegated_amount);
+        if !mint_matches {
+            return Err(TokenError::MintMismatch.into());
+        }
 
-            if delegated_amount == 0 {
-                source_account.clear_delegate();
+        // Validates the mint information.
+
+        if let Some((mint_info, decimals)) = expected_mint_info {
+            if mint_info.key() != &source_account.mint {
+                return Err(TokenError::MintMismatch.into());
+            }
+
+            let mint = unsafe { load::<Mint>(mint_info.borrow_data_unchecked())? };
+
+            if decimals != mint.decimals {
+                return Err(TokenError::MintDecimalsMismatch.into());
             }
         }
-    } else {
-        validate_owner(&source_account.owner, authority_info, remaning)?;
+
+        // Validates the authority (delegate or owner).
+
+        let delegated_amount = if source_account.delegate() == Some(authority_info.key()) {
+            validate_owner(authority_info.key(), authority_info, remaning)?;
+
+            Some(
+                source_account
+                    .delegated_amount()
+                    .checked_sub(amount)
+                    .ok_or(TokenError::InsufficientFunds)?,
+            )
+        } else {
+            validate_owner(&source_account.owner, authority_info, remaning)?;
+
+            None
+        };
+
+        (self_transfer, remaining_amount, delegated_amount)
+    };
+
+    // SAFETY: there is a single mutable borrow to `source_account_info` account data. The account
+    // is also guaranteed to be initialized.
+    let source_account =
+        unsafe { load_mut_unchecked::<Account>(source_account_info.borrow_mut_data_unchecked())? };
+
+    // Updated the delegated amount if necessary.
+    if let Some(delegated_amount) = delegated_amount {
+        source_account.set_delegated_amount(delegated_amount);
+
+        if delegated_amount == 0 {
+            source_account.clear_delegate();
+        }
     }
 
     if self_transfer || amount == 0 {
@@ -123,6 +150,12 @@ pub fn process_transfer(
 
         source_account.set_amount(remaining_amount);
 
+        // SAFETY: there is a single mutable borrow to `destination_account_info` account data.
+        // The account is also guaranteed to be initialized.
+        let destination_account = unsafe {
+            load_mut_unchecked::<Account>(destination_account_info.borrow_mut_data_unchecked())?
+        };
+
         let destination_amount = destination_account
             .amount()
             .checked_add(amount)
@@ -130,11 +163,13 @@ pub fn process_transfer(
         destination_account.set_amount(destination_amount);
 
         if source_account.is_native() {
+            // SAFETY: single mutable borrow to `source_account_info` lamports.
             let source_lamports = unsafe { source_account_info.borrow_mut_lamports_unchecked() };
             *source_lamports = source_lamports
                 .checked_sub(amount)
                 .ok_or(TokenError::Overflow)?;
 
+            // SAFETY: single mutable borrow to `destination_account_info` lamports.
             let destination_lamports =
                 unsafe { destination_account_info.borrow_mut_lamports_unchecked() };
             *destination_lamports = destination_lamports

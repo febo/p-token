@@ -106,6 +106,9 @@ fn validate_owner(
     if owner_account_info.data_len() == Multisig::LEN
         && owner_account_info.owner() == &TOKEN_PROGRAM_ID
     {
+        // SAFETY: the caller guarantees that there are no mutable borrows of `owner_account_info`
+        // account data, so it is ok to have multiple immutable borrows (this would normally only
+        // happen if the account/mint is the same as the owner).
         let multisig = unsafe { load::<Multisig>(owner_account_info.borrow_data_unchecked())? };
 
         let mut num_signers = 0;

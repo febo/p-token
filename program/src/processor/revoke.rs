@@ -11,7 +11,7 @@ pub fn process_revoke(accounts: &[AccountInfo], _instruction_data: &[u8]) -> Pro
     let [source_account_info, owner_info, remaning @ ..] = accounts else {
         return Err(ProgramError::NotEnoughAccountKeys);
     };
-
+    // SAFETY: there are no other borrows of the `source_account` data.
     let source_account =
         unsafe { load_mut::<Account>(source_account_info.borrow_mut_data_unchecked())? };
 
@@ -19,6 +19,7 @@ pub fn process_revoke(accounts: &[AccountInfo], _instruction_data: &[u8]) -> Pro
         return Err(TokenError::AccountFrozen.into());
     }
 
+    // TODO: can source == owner?
     validate_owner(&source_account.owner, owner_info, remaning)?;
 
     source_account.clear_delegate();

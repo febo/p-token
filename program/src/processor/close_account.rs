@@ -3,7 +3,7 @@ use pinocchio::{
 };
 use token_interface::{
     error::TokenError,
-    state::{account::Account, load_mut},
+    state::{account::Account, load},
 };
 
 use super::validate_owner;
@@ -26,24 +26,30 @@ pub fn process_close_account(accounts: &[AccountInfo]) -> ProgramResult {
         return Err(ProgramError::InvalidAccountData);
     }
 
-    let source_account =
-        unsafe { load_mut::<Account>(source_account_info.borrow_mut_data_unchecked())? };
+    // SAFETY: scoped immutable borrow of the source account data. Changes to the
+    // account info data happens after the borrow ends.
+    {
+        let source_account =
+            unsafe { load::<Account>(source_account_info.borrow_data_unchecked())? };
 
-    if !source_account.is_native() && source_account.amount() != 0 {
-        return Err(TokenError::NonNativeHasBalance.into());
-    }
+        if !source_account.is_native() && source_account.amount() != 0 {
+            return Err(TokenError::NonNativeHasBalance.into());
+        }
 
-    let authority = source_account
-        .close_authority()
-        .unwrap_or(&source_account.owner);
+        let authority = source_account
+            .close_authority()
+            .unwrap_or(&source_account.owner);
 
-    if !source_account.is_owned_by_system_program_or_incinerator() {
-        validate_owner(authority, authority_info, remaining)?;
-    } else if destination_account_info.key() != &INCINERATOR_ID {
-        return Err(ProgramError::InvalidAccountData);
+        if !source_account.is_owned_by_system_program_or_incinerator() {
+            validate_owner(authority, authority_info, remaining)?;
+        } else if destination_account_info.key() != &INCINERATOR_ID {
+            return Err(ProgramError::InvalidAccountData);
+        }
     }
 
     let destination_starting_lamports = destination_account_info.lamports();
+    // SAFETY: there are no other borrows of the source and destination accounts
+    // at this point.
     unsafe {
         // Moves the lamports to the destination account.
         *destination_account_info.borrow_mut_lamports_unchecked() = destination_starting_lamports
