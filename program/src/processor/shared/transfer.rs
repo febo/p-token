@@ -126,26 +126,27 @@ pub fn process_transfer(
         (self_transfer, remaining_amount, delegated_amount)
     };
 
-    // SAFETY: there is a single mutable borrow to `source_account_info` account data. The account
-    // is also guaranteed to be initialized.
-    let source_account =
-        unsafe { load_mut_unchecked::<Account>(source_account_info.borrow_mut_data_unchecked())? };
-
-    // Updated the delegated amount if necessary.
-    if let Some(delegated_amount) = delegated_amount {
-        source_account.set_delegated_amount(delegated_amount);
-
-        if delegated_amount == 0 {
-            source_account.clear_delegate();
-        }
-    }
-
     if self_transfer || amount == 0 {
         // Validates the token accounts owner since we are not writing
         // to these account.
         check_account_owner(source_account_info)?;
         check_account_owner(destination_account_info)?;
     } else {
+        // SAFETY: there is a single mutable borrow to `source_account_info` account data. The account
+        // is also guaranteed to be initialized.
+        let source_account = unsafe {
+            load_mut_unchecked::<Account>(source_account_info.borrow_mut_data_unchecked())?
+        };
+
+        // Updated the delegated amount if necessary.
+        if let Some(delegated_amount) = delegated_amount {
+            source_account.set_delegated_amount(delegated_amount);
+
+            if delegated_amount == 0 {
+                source_account.clear_delegate();
+            }
+        }
+
         // Moves the tokens.
 
         source_account.set_amount(remaining_amount);
