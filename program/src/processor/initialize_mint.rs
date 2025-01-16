@@ -44,7 +44,7 @@ pub fn process_initialize_mint(
     // Check rent-exempt status of the mint account.
 
     let is_exempt = if let Some(rent_sysvar_info) = rent_sysvar_info {
-        let rent = unsafe { Rent::from_bytes(rent_sysvar_info.borrow_data_unchecked()) };
+        let rent = unsafe { Rent::from_bytes(rent_sysvar_info.borrow_data_unchecked())? };
         rent.is_exempt(mint_info.lamports(), size_of::<Mint>())
     } else {
         Rent::get()?.is_exempt(mint_info.lamports(), size_of::<Mint>())

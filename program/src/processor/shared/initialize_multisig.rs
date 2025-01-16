@@ -32,7 +32,7 @@ pub fn process_initialize_multisig(
     let multisig_info_data_len = multisig_info.data_len();
 
     let is_exempt = if let Some(rent_sysvar_info) = rent_sysvar_info {
-        let rent = unsafe { Rent::from_bytes(rent_sysvar_info.borrow_data_unchecked()) };
+        let rent = unsafe { Rent::from_bytes(rent_sysvar_info.borrow_data_unchecked())? };
         rent.is_exempt(multisig_info.lamports(), multisig_info_data_len)
     } else {
         Rent::get()?.is_exempt(multisig_info.lamports(), multisig_info_data_len)

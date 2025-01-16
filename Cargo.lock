@@ -2759,14 +2759,12 @@ checksum = "8b870d8c151b6f2fb93e84a13146138f05d02ed11c7e7c54f8826aaaf7c9f184"
 [[package]]
 name = "pinocchio"
 version = "0.7.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "43a8a77bf74e1c4050a2bad53648acfcfbf22b1806473f9c9334a58ef3b38ec4"
+source = "git+https://github.com/febo/pinocchio.git#d99eb9d218b189ea3fdbf42069fee7691c814dc0"
 
 [[package]]
 name = "pinocchio-log"
 version = "0.3.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "95bd1d0d8a24f2637cb6748232912b6bae67b643b7ca903c68e670e704cd0652"
+source = "git+https://github.com/febo/pinocchio.git#d99eb9d218b189ea3fdbf42069fee7691c814dc0"
 dependencies = [
  "pinocchio-log-macro",
 ]
@@ -2774,8 +2772,7 @@ dependencies = [
 [[package]]
 name = "pinocchio-log-macro"
 version = "0.3.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "657779675430389ebbf00b8a5b6325e64157795ac61702fadf8756ac8806a50e"
+source = "git+https://github.com/febo/pinocchio.git#d99eb9d218b189ea3fdbf42069fee7691c814dc0"
 dependencies = [
  "quote",
  "regex",
@@ -2785,8 +2782,7 @@ dependencies = [
 [[package]]
 name = "pinocchio-pubkey"
 version = "0.2.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "103d69776a0c585bb01b344d641346593adb4496120796df229722a9bab2db68"
+source = "git+https://github.com/febo/pinocchio.git#d99eb9d218b189ea3fdbf42069fee7691c814dc0"
 dependencies = [
  "five8_const",
  "pinocchio",

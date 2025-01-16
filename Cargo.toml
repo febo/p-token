@@ -21,6 +21,6 @@ repository = "https://github.com/febo/token"
 [workspace.dependencies]
 mollusk-svm = { version = "0.0.13", features = ["fuzz"], git = "https://github.com/buffalojoec/mollusk.git" }
 mollusk-svm-fuzz-fixture = { version = "0.0.13", git = "https://github.com/buffalojoec/mollusk.git" }
-pinocchio = "0.7.1"
-pinocchio-log = "0.3.0"
-pinocchio-pubkey = "0.2.2"
+pinocchio = { version = "0.7.1", git = "https://github.com/febo/pinocchio.git" }
+pinocchio-log = { version = "0.3.0", git = "https://github.com/febo/pinocchio.git" }
+pinocchio-pubkey = { version = "0.2.2", git = "https://github.com/febo/pinocchio.git" }

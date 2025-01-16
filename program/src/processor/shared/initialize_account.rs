@@ -42,7 +42,7 @@ pub fn process_initialize_account(
 
     let minimum_balance = if rent_sysvar_account {
         let rent_sysvar_info = remaning.first().ok_or(ProgramError::NotEnoughAccountKeys)?;
-        let rent = unsafe { Rent::from_bytes(rent_sysvar_info.borrow_data_unchecked()) };
+        let rent = unsafe { Rent::from_bytes(rent_sysvar_info.borrow_data_unchecked())? };
         rent.minimum_balance(new_account_info_data_len)
     } else {
         Rent::get()?.minimum_balance(new_account_info_data_len)
