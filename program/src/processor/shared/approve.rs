@@ -1,7 +1,7 @@
 use pinocchio::{account_info::AccountInfo, program_error::ProgramError, ProgramResult};
 use token_interface::{
     error::TokenError,
-    state::{account::Account, load, load_mut, mint::Mint},
+    state::{account::Account, load, load_mut_unchecked, mint::Mint},
 };
 
 use crate::processor::validate_owner;
@@ -45,9 +45,8 @@ pub fn process_approve(
 
     // Validates source account.
     {
-        // SAFETY: scoped immutable borrow of `source_account_info` account data. When
-        // `owner_info` is the same as `source_account_info`, there will be another immutable
-        // borrow in `validate_owner` – this is safe because both borrows are immutable.
+        // SAFETY: scoped immutable borrow of `source_account_info` account data. The `load`
+        // validates that the account is initialized.
         let source_account =
             unsafe { load::<Account>(source_account_info.borrow_data_unchecked())? };
 
@@ -60,6 +59,8 @@ pub fn process_approve(
                 return Err(TokenError::MintMismatch.into());
             }
 
+            // SAFETY: scoped immutable borrow of `mint_info` account data. The `load`
+            // validates that the account is initialized.
             let mint = unsafe { load::<Mint>(mint_info.borrow_data_unchecked())? };
 
             if expected_decimals != mint.decimals {
@@ -72,10 +73,10 @@ pub fn process_approve(
 
     // Sets the delegate and delegated amount.
 
-    // SAFETY: any immutable borrow of `source_account_info` account data is dropped at
-    // this point, so it is safe to borrow mutably.
+    // SAFETY: there is a single mutable borrow to `source_account_info` account data.
+    // The account is also guaranteed to be initialized.
     let source_account =
-        unsafe { load_mut::<Account>(source_account_info.borrow_mut_data_unchecked())? };
+        unsafe { load_mut_unchecked::<Account>(source_account_info.borrow_mut_data_unchecked())? };
     source_account.set_delegate(delegate_info.key());
     source_account.set_delegated_amount(amount);
 

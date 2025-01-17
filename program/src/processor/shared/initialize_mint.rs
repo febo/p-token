@@ -34,7 +34,8 @@ pub fn process_initialize_mint(
         };
         (mint_info, None)
     };
-    // SAFETY: there are no other borrows of the `Mint` account data.
+
+    // SAFETY: there is a single mutable borrow of the 'mint_info' account data.
     let mint = unsafe { load_mut_unchecked::<Mint>(mint_info.borrow_mut_data_unchecked())? };
 
     if mint.is_initialized() {
@@ -83,7 +84,7 @@ impl InitializeMint<'_> {
         // - decimals (1 byte)
         // - mint_authority (32 bytes)
         // - option + freeze_authority (1 byte + 32 bytes)
-        if bytes.len() < 34 {
+        if bytes.len() < 34 || (bytes[33] == 1 && bytes.len() < 66) {
             return Err(ProgramError::InvalidInstructionData);
         }
 
@@ -95,16 +96,19 @@ impl InitializeMint<'_> {
 
     #[inline]
     pub fn decimals(&self) -> u8 {
+        // SAFETY: the `bytes` length was validated in `try_from_bytes`.
         unsafe { *self.raw }
     }
 
     #[inline]
     pub fn mint_authority(&self) -> &Pubkey {
+        // SAFETY: the `bytes` length was validated in `try_from_bytes`.
         unsafe { &*(self.raw.add(1) as *const Pubkey) }
     }
 
     #[inline]
     pub fn freeze_authority(&self) -> Option<&Pubkey> {
+        // SAFETY: the `bytes` length was validated in `try_from_bytes`.
         unsafe {
             if *self.raw.add(33) == 0 {
                 Option::None

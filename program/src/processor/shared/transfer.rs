@@ -52,9 +52,8 @@ pub fn process_transfer(
     // Validates source and destination accounts.
 
     let (self_transfer, remaining_amount, delegated_amount) = {
-        // SAFETY: scoped immutable borrow of `source_account_info` account data. When
-        // `authority_info` is the same as `source_account_info`, there will be another immutable
-        // borrow in `validate_owner` – this is safe because both borrows are immutable.
+        // SAFETY: scoped immutable borrow of `source_account_info` account data. The `load`
+        // validates that the account is initialized.
         let source_account =
             unsafe { load::<Account>(source_account_info.borrow_data_unchecked())? };
 
@@ -68,6 +67,7 @@ pub fn process_transfer(
             (source_account.is_frozen(), true)
         } else {
             // SAFETY: scoped immutable borrow of `destination_account_info` account data.
+            // The `load` validates that the account is initialized.
             let destination =
                 unsafe { load::<Account>(destination_account_info.borrow_data_unchecked())? };
             (
@@ -99,6 +99,8 @@ pub fn process_transfer(
                 return Err(TokenError::MintMismatch.into());
             }
 
+            // SAFETY: scoped immutable borrow of `mint_info` account data. The `load` validates
+            // the account data length and that the mint is initialized.
             let mint = unsafe { load::<Mint>(mint_info.borrow_data_unchecked())? };
 
             if decimals != mint.decimals {
@@ -151,8 +153,8 @@ pub fn process_transfer(
 
         source_account.set_amount(remaining_amount);
 
-        // SAFETY: there is a single mutable borrow to `destination_account_info` account data.
-        // The account is also guaranteed to be initialized.
+        // SAFETY: single mutable borrow to `destination_account_info` account data. The account
+        // is also guaranteed to be initialized and different than `source_account_info`.
         let destination_account = unsafe {
             load_mut_unchecked::<Account>(destination_account_info.borrow_mut_data_unchecked())?
         };

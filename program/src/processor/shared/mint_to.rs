@@ -18,9 +18,8 @@ pub fn process_mint_to(
 
     // Validates the destination account.
     {
-        // SAFETY: scoped immutable borrow of `destination_account_info` account data. When
-        // `owner_info` is the same as `destination_account_info`, there will be another immutable
-        // borrow in `validate_owner` – this is safe because both borrows are immutable.
+        // SAFETY: scoped immutable borrow of `destination_account_info` account data. The `load`
+        // validates that the account is initialized.
         let destination_account =
             unsafe { load::<Account>(destination_account_info.borrow_data_unchecked())? };
 
@@ -36,9 +35,8 @@ pub fn process_mint_to(
             return Err(TokenError::MintMismatch.into());
         }
 
-        // SAFETY: scoped immutable borrow of `mint_info` account data. When `owner_info` is the
-        // same as `mint_info`, there will be another immutable borrow in `validate_owner` – this
-        // is safe because both borrows are immutable.
+        // SAFETY: scoped immutable borrow of `mint_info` account data. The `load`
+        // validates the length of the data and that the mint is initialized.
         let mint = unsafe { load::<Mint>(mint_info.borrow_data_unchecked())? };
 
         if let Some(expected_decimals) = expected_decimals {
@@ -57,9 +55,9 @@ pub fn process_mint_to(
         check_account_owner(mint_info)?;
         check_account_owner(destination_account_info)?;
     } else {
-        // SAFETY: there is a single mutable borrow to `destination_account_info`. The 'mint_info'
-        // is guaranteed to be different than 'destination_account_info' since there is a length check
-        // on `load`.
+        // SAFETY: single mutable borrow to `destination_account_info`. The 'mint_info' is
+        // guaranteed to be different than 'destination_account_info' since there is a length
+        // check on `load`.
         let destination_account = unsafe {
             load_mut_unchecked::<Account>(destination_account_info.borrow_mut_data_unchecked())?
         };

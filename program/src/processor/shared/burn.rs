@@ -17,9 +17,8 @@ pub fn process_burn(
     };
 
     let (updated_source_amount, delegated_amount) = {
-        // SAFETY: scoped immutable borrow of `source_account_info` account data. When
-        // `authority_info` is the same as `source_account_info`, there will be another immutable
-        // borrow in `validate_owner` – this is safe because both borrows are immutable.
+        // SAFETY: scoped immutable borrow of `source_account_info` account data. The `load`
+        // validates that the account is initialized.
         let source_account =
             unsafe { load::<Account>(source_account_info.borrow_data_unchecked())? };
 
@@ -37,9 +36,8 @@ pub fn process_burn(
             .checked_sub(amount)
             .ok_or(TokenError::InsufficientFunds)?;
 
-        // SAFETY: scoped immutable borrow of `mint_info` account data. When `authority_info`
-        // is the same as `mint_info`, there will be another immutable borrow in
-        // `validate_owner` – this is safe because both borrows are immutable.
+        // SAFETY: scoped immutable borrow of `mint_info` account data. The `load`
+        // validates that the account is initialized.
         let mint = unsafe { load::<Mint>(mint_info.borrow_data_unchecked())? };
 
         if mint_info.key() != &source_account.mint {

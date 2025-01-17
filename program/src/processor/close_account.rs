@@ -26,9 +26,9 @@ pub fn process_close_account(accounts: &[AccountInfo]) -> ProgramResult {
         return Err(ProgramError::InvalidAccountData);
     }
 
-    // SAFETY: scoped immutable borrow of the source account data. Changes to the
-    // account info data happens after the borrow ends.
     {
+        // SAFETY: scoped immutable borrow of the `source_account_info` account data. The `load`
+        // validates that the mint is initialized.
         let source_account =
             unsafe { load::<Account>(source_account_info.borrow_data_unchecked())? };
 
@@ -48,10 +48,12 @@ pub fn process_close_account(accounts: &[AccountInfo]) -> ProgramResult {
     }
 
     let destination_starting_lamports = destination_account_info.lamports();
-    // SAFETY: there are no other borrows of the source and destination accounts
-    // at this point.
+
+    // Moves the lamports to the destination account.
+
+    // SAFETY: single mutable borrow of `destination_account_info` lamports and
+    // there are no "active" borrows of `source_account_info` account data.
     unsafe {
-        // Moves the lamports to the destination account.
         *destination_account_info.borrow_mut_lamports_unchecked() = destination_starting_lamports
             .checked_add(source_account_info.lamports())
             .ok_or(TokenError::Overflow)?;

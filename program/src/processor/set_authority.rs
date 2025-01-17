@@ -6,7 +6,7 @@ use pinocchio::{
 use token_interface::{
     error::TokenError,
     instruction::AuthorityType,
-    state::{account::Account, load_mut, mint::Mint, RawType},
+    state::{account::Account, load, load_mut_unchecked, mint::Mint, RawType},
 };
 
 use super::validate_owner;
@@ -27,8 +27,9 @@ pub fn process_set_authority(accounts: &[AccountInfo], instruction_data: &[u8]) 
     };
 
     if account_info.data_len() == Account::LEN {
-        // SAFETY: there are no other active borrows of the `account` data.
-        let account = unsafe { load_mut::<Account>(account_info.borrow_mut_data_unchecked())? };
+        // SAFETY: immutable borrow of `account_info` account data. The `load`
+        // validates that the account is initialized.
+        let account = unsafe { load::<Account>(account_info.borrow_data_unchecked())? };
 
         if account.is_frozen() {
             return Err(TokenError::AccountFrozen.into());
@@ -36,8 +37,13 @@ pub fn process_set_authority(accounts: &[AccountInfo], instruction_data: &[u8]) 
 
         match authority_type {
             AuthorityType::AccountOwner => {
-                // TODO: Can account and authority be the same?
                 validate_owner(&account.owner, authority_info, remaning)?;
+
+                // SAFETY: single mutable borrow of `account_info` account data. The
+                // `account_info` is guaranteed to the initialized.
+                let account = unsafe {
+                    load_mut_unchecked::<Account>(account_info.borrow_mut_data_unchecked())?
+                };
 
                 if let Some(authority) = new_authority {
                     account.owner = *authority;
@@ -54,8 +60,14 @@ pub fn process_set_authority(accounts: &[AccountInfo], instruction_data: &[u8]) 
             }
             AuthorityType::CloseAccount => {
                 let authority = account.close_authority().unwrap_or(&account.owner);
-                // TODO: Can account and authority be the same?
+
                 validate_owner(authority, authority_info, remaning)?;
+
+                // SAFETY: single mutable borrow of `account_info` account data. The
+                // `account_info` is guaranteed to the initialized.
+                let account = unsafe {
+                    load_mut_unchecked::<Account>(account_info.borrow_mut_data_unchecked())?
+                };
 
                 if let Some(authority) = new_authority {
                     account.set_close_authority(authority);
@@ -68,16 +80,23 @@ pub fn process_set_authority(accounts: &[AccountInfo], instruction_data: &[u8]) 
             }
         }
     } else if account_info.data_len() == Mint::LEN {
-        // SAFETY: there are no other active borrows of the `account` data.
-        let mint = unsafe { load_mut::<Mint>(account_info.borrow_mut_data_unchecked())? };
+        // SAFETY: immutable borrow of `account_info` account data. The `load`
+        // validates that the mint is initialized.
+        let mint = unsafe { load::<Mint>(account_info.borrow_mut_data_unchecked())? };
 
         match authority_type {
             AuthorityType::MintTokens => {
                 // Once a mint's supply is fixed, it cannot be undone by setting a new
                 // mint_authority.
                 let mint_authority = mint.mint_authority().ok_or(TokenError::FixedSupply)?;
-                // TODO: Can account and authority be the same?
+
                 validate_owner(mint_authority, authority_info, remaning)?;
+
+                // SAFETY: single mutable borrow of `account_info` account data. The
+                // `account_info` is guaranteed to the initialized.
+                let mint = unsafe {
+                    load_mut_unchecked::<Mint>(account_info.borrow_mut_data_unchecked())?
+                };
 
                 if let Some(authority) = new_authority {
                     mint.set_mint_authority(authority);
@@ -91,8 +110,14 @@ pub fn process_set_authority(accounts: &[AccountInfo], instruction_data: &[u8]) 
                 let freeze_authority = mint
                     .freeze_authority()
                     .ok_or(TokenError::MintCannotFreeze)?;
-                // TODO: Can account and authority be the same?
+
                 validate_owner(freeze_authority, authority_info, remaning)?;
+
+                // SAFETY: single mutable borrow of `account_info` account data. The
+                // `account_info` is guaranteed to the initialized.
+                let mint = unsafe {
+                    load_mut_unchecked::<Mint>(account_info.borrow_mut_data_unchecked())?
+                };
 
                 if let Some(authority) = new_authority {
                     mint.set_freeze_authority(authority);
@@ -123,7 +148,7 @@ impl SetAuthority<'_> {
         // The minimum expected size of the instruction data.
         // - authority_type (1 byte)
         // - option + new_authority (1 byte + 32 bytes)
-        if bytes.len() < 2 {
+        if bytes.len() < 2 || (bytes[1] == 1 && bytes.len() < 34) {
             return Err(ProgramError::InvalidInstructionData);
         }
 
@@ -135,11 +160,13 @@ impl SetAuthority<'_> {
 
     #[inline(always)]
     pub fn authority_type(&self) -> Result<AuthorityType, ProgramError> {
+        // SAFETY: `bytes` length is validated in `try_from_bytes`.
         unsafe { AuthorityType::from(*self.raw) }
     }
 
     #[inline(always)]
     pub fn new_authority(&self) -> Option<&Pubkey> {
+        // SAFETY: `bytes` length is validated in `try_from_bytes`.
         unsafe {
             if *self.raw.add(1) == 0 {
                 Option::None

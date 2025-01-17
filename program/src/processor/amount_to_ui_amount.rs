@@ -23,16 +23,18 @@ pub fn process_amount_to_ui_amount(
 
     let mint_info = accounts.first().ok_or(ProgramError::NotEnoughAccountKeys)?;
     check_account_owner(mint_info)?;
-    // SAFETY: there is a single immutable borrow of the `Mint` account data.
+    // SAFETY: there is a single immutable borrow of the `Mint` account data. The `load`
+    // validates that the mint is initialized.
     let mint = unsafe {
         load::<Mint>(mint_info.borrow_data_unchecked()).map_err(|_| TokenError::InvalidMint)?
     };
 
     let mut logger = Logger::<MAX_FORMATTED_DIGITS>::default();
     logger.append_with_args(amount, &[Argument::Precision(mint.decimals)]);
+
     // "Extract" the formatted string from the logger.
     //
-    // SAFETY: the logger is guaranteed to be a valid UTF-8 string.
+    // SAFETY: the logger is guaranteed to have a valid UTF-8 string.
     let mut s = unsafe { from_utf8_unchecked(&logger) };
 
     if mint.decimals > 0 && s.contains('.') {

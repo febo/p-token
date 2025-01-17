@@ -13,9 +13,8 @@ pub fn process_toggle_account_state(accounts: &[AccountInfo], freeze: bool) -> P
     };
 
     {
-        // SAFETY: scoped immutable borrow of `source_account_info` account data. When
-        // `authority_info` is the same as `source_account_info`, there will be another immutable
-        // borrow in `validate_owner` – this is safe because both borrows are immutable.
+        // SAFETY: scoped immutable borrow of `source_account_info` account data. The `load`
+        // validates that the account is initialized.
         let source_account =
             unsafe { load::<Account>(source_account_info.borrow_data_unchecked())? };
 
@@ -29,9 +28,8 @@ pub fn process_toggle_account_state(accounts: &[AccountInfo], freeze: bool) -> P
             return Err(TokenError::MintMismatch.into());
         }
 
-        // SAFETY: scoped immutable borrow of `source_account_info` account data. When
-        // `authority_info` is the same as `source_account_info`, there will be another immutable
-        // borrow in `validate_owner` – this is safe because both borrows are immutable.
+        // SAFETY: scoped immutable borrow of `mint_info` account data. The `load`
+        // validates the data length and that the mint is initialized.
         let mint = unsafe { load::<Mint>(mint_info.borrow_data_unchecked())? };
 
         match mint.freeze_authority() {

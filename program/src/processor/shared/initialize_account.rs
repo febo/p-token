@@ -83,6 +83,7 @@ pub fn process_initialize_account(
     if is_native_mint {
         account.set_native(true);
         account.set_native_amount(minimum_balance);
+        // SAFETY: single mutable borrow to `new_account_info` lamports.
         unsafe {
             account.set_amount(
                 new_account_info

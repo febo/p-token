@@ -7,7 +7,7 @@ use token_interface::{
 #[inline(always)]
 pub fn process_initialize_immutable_owner(accounts: &[AccountInfo]) -> ProgramResult {
     let token_account_info = accounts.first().ok_or(ProgramError::NotEnoughAccountKeys)?;
-    // SAFETY: there is a single immutable borrow of the `Account` account data.
+    // SAFETY: single immutable borrow of the `Account` account data.
     let account = unsafe { load_unchecked::<Account>(token_account_info.borrow_data_unchecked())? };
 
     if account.is_initialized() {
