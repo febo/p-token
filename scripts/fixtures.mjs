@@ -44,8 +44,6 @@ async function run(args) {
         await $`git clone ${SPL_TOKEN_GIT} ${SPL_TOKEN_DIR}`;
 
         cd(SPL_TOKEN_DIR);
-        // TODO: this can be removed once the mollusk checks PR is merged.
-        await $`git switch febo/mollusk-checks`;
         
         await $`EJECT_FUZZ_FIXTURES=${FIXTURES_DIR} cargo test-sbf --features mollusk-svm/fuzz`;
     }
