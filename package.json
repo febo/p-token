@@ -21,7 +21,9 @@
     "clients:rust:format": "zx ./scripts/client/format-rust.mjs",
     "clients:rust:lint": "zx ./scripts/client/lint-rust.mjs",
     "clients:rust:publish": "zx ./scripts/client/publish-rust.mjs",
-    "clients:rust:test": "zx ./scripts/client/test-rust.mjs"
+    "clients:rust:test": "zx ./scripts/client/test-rust.mjs",
+    "fixtures:run": "zx ./scripts/fixtures.mjs run",
+    "fixtures:clean": "zx ./scripts/fixtures.mjs clean"
   },
   "devDependencies": {
     "@iarna/toml": "^2.2.5",

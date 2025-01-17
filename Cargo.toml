@@ -1,6 +1,10 @@
 [workspace]
 resolver = "2"
-members = ["interface", "program"]
+members = [
+    "fixtures",
+    "interface",
+    "program"
+]
 
 [workspace.metadata.cli]
 solana = "2.1.0"
@@ -15,6 +19,8 @@ license = "Apache-2.0"
 repository = "https://github.com/febo/token"
 
 [workspace.dependencies]
-pinocchio = "0.7.0"
+mollusk-svm = { version = "0.0.13", features = ["fuzz"], git = "https://github.com/buffalojoec/mollusk.git" }
+mollusk-svm-fuzz-fixture = { version = "0.0.13", git = "https://github.com/buffalojoec/mollusk.git" }
+pinocchio = "0.7.1"
 pinocchio-log = "0.3.0"
 pinocchio-pubkey = "0.2.2"
