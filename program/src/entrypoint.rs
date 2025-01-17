@@ -43,7 +43,7 @@ pub fn process_instruction(
             #[cfg(feature = "logging")]
             pinocchio::msg!("Instruction: InitializeMint");
 
-            process_initialize_mint(accounts, instruction_data, true)
+            process_initialize_mint(accounts, instruction_data)
         }
 
         // 3 - Transfer
