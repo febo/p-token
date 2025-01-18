@@ -21,6 +21,7 @@ use token_interface::{
 pub mod amount_to_ui_amount;
 pub mod approve;
 pub mod approve_checked;
+pub mod batch;
 pub mod burn;
 pub mod burn_checked;
 pub mod close_account;
