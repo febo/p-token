@@ -95,6 +95,7 @@ pub fn process_batch(accounts: &[AccountInfo], instruction_data: &[u8]) -> Progr
                 let batch_accounts = map_accounts!(accounts, &mut instruction_data, 2);
                 process_close_account(&batch_accounts)?;
             }
+            // 18 - InitializeAccount3
             18 => {
                 #[cfg(feature = "logging")]
                 pinocchio::msg!("Batch Instruction: InitializeAccount3");
