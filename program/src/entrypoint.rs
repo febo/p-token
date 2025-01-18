@@ -1,3 +1,4 @@
+use batch::process_batch;
 use pinocchio::{
     account_info::AccountInfo, default_panic_handler, no_allocator, program_entrypoint,
     program_error::ProgramError, pubkey::Pubkey, ProgramResult,
@@ -80,6 +81,13 @@ pub fn process_instruction(
             pinocchio::msg!("Instruction: InitializeMint2");
 
             process_initialize_mint2(accounts, instruction_data)
+        }
+        // 255 - Batch
+        255 => {
+            #[cfg(feature = "logging")]
+            pinocchio::msg!("Instruction: Batch");
+
+            process_batch(accounts, instruction_data)
         }
         _ => process_remaining_instruction(accounts, instruction_data, *discriminator),
     }
