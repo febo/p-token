@@ -8,9 +8,11 @@ use token_interface::{
 
 use super::validate_owner;
 
-/// Incinerator address.
-const INCINERATOR_ID: Pubkey =
-    pinocchio_pubkey::pubkey!("1nc1nerator11111111111111111111111111111111");
+/// Incinerator (`1nc1nerator11111111111111111111111111111111`) address.
+const INCINERATOR_ID: Pubkey = [
+    0, 51, 144, 114, 141, 52, 17, 96, 121, 189, 201, 17, 191, 255, 0, 219, 212, 77, 46, 205, 204,
+    247, 156, 166, 225, 0, 56, 225, 0, 0, 0, 0,
+];
 
 #[inline(always)]
 pub fn process_close_account(accounts: &[AccountInfo]) -> ProgramResult {

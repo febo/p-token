@@ -2609,15 +2609,13 @@ checksum = "8b870d8c151b6f2fb93e84a13146138f05d02ed11c7e7c54f8826aaaf7c9f184"
 
 [[package]]
 name = "pinocchio"
-version = "0.7.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2999d06e0c7b659daa8d41d56d906c26531e551d22e49c044339024d3e195ebc"
+version = "0.7.1"
+source = "git+https://github.com/febo/pinocchio.git?branch=febo/close-unstable#1aa533f55720e83451df7fb7e04507264e24190f"
 
 [[package]]
 name = "pinocchio-log"
 version = "0.3.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "95bd1d0d8a24f2637cb6748232912b6bae67b643b7ca903c68e670e704cd0652"
+source = "git+https://github.com/febo/pinocchio.git?branch=febo/close-unstable#1aa533f55720e83451df7fb7e04507264e24190f"
 dependencies = [
  "pinocchio-log-macro",
 ]
@@ -2625,8 +2623,7 @@ dependencies = [
 [[package]]
 name = "pinocchio-log-macro"
 version = "0.3.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "657779675430389ebbf00b8a5b6325e64157795ac61702fadf8756ac8806a50e"
+source = "git+https://github.com/febo/pinocchio.git?branch=febo/close-unstable#1aa533f55720e83451df7fb7e04507264e24190f"
 dependencies = [
  "quote",
  "regex",
@@ -2636,8 +2633,7 @@ dependencies = [
 [[package]]
 name = "pinocchio-pubkey"
 version = "0.2.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "103d69776a0c585bb01b344d641346593adb4496120796df229722a9bab2db68"
+source = "git+https://github.com/febo/pinocchio.git?branch=febo/close-unstable#1aa533f55720e83451df7fb7e04507264e24190f"
 dependencies = [
  "five8_const",
  "pinocchio",
@@ -5239,7 +5235,6 @@ dependencies = [
  "assert_matches",
  "pinocchio",
  "pinocchio-log",
- "pinocchio-pubkey",
  "solana-program-test",
  "solana-sdk",
  "spl-token",
