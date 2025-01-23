@@ -1,0 +1,18 @@
+[package]
+name = "fixtures"
+description = "Fixtures runner"
+version = "0.0.0"
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+publish = false
+
+[dependencies]
+clap = { version =  "4.5", features = ["derive"] }
+clap_derive = "4.5"
+console = "0.15.10"
+mollusk-svm = { workspace = true }
+mollusk-svm-fuzz-fixture = { workspace = true }
+solana-pubkey = "2.1"
+solana-sdk = "2.1"
+token-interface = { version = "^0", path = "../interface" }

@@ -8,7 +8,7 @@ repository = { workspace = true }
 publish = false
 
 [package.metadata.solana]
-program-id = "PToken1111111111111111111111111111111111111"
+program-id = "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
 
 [lib]
 crate-type = ["cdylib"]
@@ -24,7 +24,9 @@ token-interface = { version = "^0", path = "../interface" }
 
 [dev-dependencies]
 assert_matches = "1.5.0"
-solana-program-test = "~1.18"
-solana-sdk = "~1.18"
+mollusk-svm = { workspace = true }
+mollusk-svm-fuzz-fixture = { workspace = true }
+solana-program-test = "2.1"
+solana-sdk = "2.1"
 spl-token = { version="^4", features=["no-entrypoint"] }
 test-case = "3.3.1"
