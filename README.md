@@ -34,30 +34,30 @@ This repository contains a **proof-of-concept** of a reimplementation of the SPL
 | Instruction                | Completed | CU (`p-token`) | CU (`spl-token`) |
 |----------------------------|-----------|----------------|------------------|
 | `InitializeMint`           | ✅        | 100            | 2967             |
-| `InitializeAccount`        | ✅        | 170            | 4527             |
-| `InitializeMultisig`       | ✅        | 190            | 2973             |
-| `Transfer`                 | ✅        | 153            | 4645             |
-| `Approve`                  | ✅        | 124            | 2904             |
+| `InitializeAccount`        | ✅        | 185            | 4527             |
+| `InitializeMultisig`       | ✅        | 204            | 2973             |
+| `Transfer`                 | ✅        | 155            | 4645             |
+| `Approve`                  | ✅        | 122            | 2904             |
 | `Revoke`                   | ✅        |  97            | 2677             |
-| `SetAuthority`             | ✅        | 126            | 3167             |
-| `MintTo`                   | ✅        | 154            | 4538             |
+| `SetAuthority`             | ✅        | 127            | 3167             |
+| `MintTo`                   | ✅        | 155            | 4538             |
 | `Burn`                     | ✅        | 168            | 4753             |
-| `CloseAccount`             | ✅        | 147            | 2916             |
+| `CloseAccount`             | ✅        | 154            | 2916             |
 | `FreezeAccount`            | ✅        | 136            | 4265             |
 | `ThawAccount`              | ✅        | 136            | 4267             |
-| `TransferChecked`          | ✅        | 206            | 6201             |
+| `TransferChecked`          | ✅        | 204            | 6201             |
 | `ApproveChecked`           | ✅        | 162            | 4459             |
 | `MintToChecked`            | ✅        | 164            | 4546             |
-| `BurnChecked`              | ✅        | 170            | 4755             |
-| `InitializeAccount2`       | ✅        | 150            | 4388             |
+| `BurnChecked`              | ✅        | 169            | 4755             |
+| `InitializeAccount2`       | ✅        | 164            | 4388             |
 | `SyncNative`               | ✅        |                |                  |
 | `InitializeAccount3`       | ✅        | 272            | 4240             |
 | `InitializeMultisig2`      | ✅        | 319            | 2826             |
 | `InitializeMint2`          | ✅        | 234            | 2827             |
 | `GetAccountDataSize`       | ✅        |                |                  |
 | `InitializeImmutableOwner` | ✅        |                |                  |
-| `AmountToUiAmount`         | ✅        | 483            | 2501             |
-| `UiAmountToAmount`         | ✅        | 873            | 3161             |
+| `AmountToUiAmount`         | ✅        | 503            | 2501             |
+| `UiAmountToAmount`         | ✅        | 875            | 3161             |
 
 > Tests were run using Solana `v2.1.0`.
 
