@@ -24,16 +24,16 @@ pub fn process_initialize_account(
 ) -> ProgramResult {
     // Accounts expected depend on whether we have the `rent_sysvar` account or not.
 
-    let (new_account_info, mint_info, owner, remaning) = if let Some(owner) = owner {
-        let [new_account_info, mint_info, remaning @ ..] = accounts else {
+    let (new_account_info, mint_info, owner, remaining) = if let Some(owner) = owner {
+        let [new_account_info, mint_info, remaining @ ..] = accounts else {
             return Err(ProgramError::NotEnoughAccountKeys);
         };
-        (new_account_info, mint_info, owner, remaning)
+        (new_account_info, mint_info, owner, remaining)
     } else {
-        let [new_account_info, mint_info, owner_info, remaning @ ..] = accounts else {
+        let [new_account_info, mint_info, owner_info, remaining @ ..] = accounts else {
             return Err(ProgramError::NotEnoughAccountKeys);
         };
-        (new_account_info, mint_info, owner_info.key(), remaning)
+        (new_account_info, mint_info, owner_info.key(), remaining)
     };
 
     // Check rent-exempt status of the token account.
