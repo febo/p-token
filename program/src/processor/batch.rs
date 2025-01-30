@@ -21,9 +21,11 @@ pub fn process_batch(mut accounts: &[AccountInfo], mut instruction_data: &[u8]) 
             }
             _ => (),
         }
+
         // SAFETY: The instruction data is guaranteed to have at least two bytes.
         let expected_accounts = unsafe { *instruction_data.get_unchecked(0) as usize };
         let data_offset = IX_HEADER_SIZE + unsafe { *instruction_data.get_unchecked(1) as usize };
+
         if instruction_data.len() < data_offset {
             return Err(ProgramError::InvalidInstructionData);
         }
