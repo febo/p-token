@@ -41,7 +41,9 @@ pub fn process_initialize_account(
     let new_account_info_data_len = new_account_info.data_len();
 
     let minimum_balance = if rent_sysvar_account {
-        let rent_sysvar_info = remaning.first().ok_or(ProgramError::NotEnoughAccountKeys)?;
+        let rent_sysvar_info = remaining
+            .first()
+            .ok_or(ProgramError::NotEnoughAccountKeys)?;
         // SAFETY: single immutable borrow to `rent_sysvar_info`; account ID and length are
         // checked by `from_account_info_unchecked`.
         let rent = unsafe { Rent::from_account_info_unchecked(rent_sysvar_info)? };
