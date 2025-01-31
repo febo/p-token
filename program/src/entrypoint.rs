@@ -28,15 +28,16 @@ default_panic_handler!();
 /// - `9`:  `CloseAccount`
 /// - `18`: `InitializeAccount3`
 /// - `20`: `InitializeMint2`
+/// - `255`: `Batch`
 #[inline(always)]
 pub fn process_instruction(
     _program_id: &Pubkey,
     accounts: &[AccountInfo],
     instruction_data: &[u8],
 ) -> ProgramResult {
-    let (discriminator, instruction_data) = instruction_data
-        .split_first()
-        .ok_or(ProgramError::InvalidInstructionData)?;
+    let [discriminator, instruction_data @ ..] = instruction_data else {
+        return Err(ProgramError::InvalidInstructionData);
+    };
 
     match *discriminator {
         // 0 - InitializeMint

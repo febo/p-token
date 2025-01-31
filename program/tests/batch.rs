@@ -2,13 +2,6 @@
 
 mod setup;
 
-use std::{
-    collections::{BTreeMap, HashMap},
-    println,
-};
-
-use pinocchio::instruction;
-use setup::{account, mint, TOKEN_PROGRAM_ID};
 use solana_program_test::{tokio, ProgramTest};
 use solana_sdk::{
     instruction::{AccountMeta, Instruction},
@@ -16,27 +9,29 @@ use solana_sdk::{
     program_pack::Pack,
     pubkey::Pubkey,
     signature::{Keypair, Signer},
-    system_instruction, system_program,
+    system_instruction,
     transaction::Transaction,
 };
 
 fn batch_instruction(instructions: Vec<Instruction>) -> Result<Instruction, ProgramError> {
-    // Create a Vector of ordered, AccountMetas
+    // Create a `Vec` of ordered `AccountMeta`s
     let mut accounts: Vec<AccountMeta> = vec![];
-    // Start with the batch discriminator and a length byte
-
+    // Start with the batch discriminator
     let mut data: Vec<u8> = vec![0xff];
+
     for instruction in instructions {
-        // Error out on non-token IX
+        // Error out on non-token IX.
         if instruction.program_id.ne(&spl_token::ID) {
             return Err(ProgramError::IncorrectProgramId);
         }
 
-        data.extend_from_slice(&[instruction.accounts.len() as u8]);
-        data.extend_from_slice(&[instruction.data.len() as u8]);
+        data.push(instruction.accounts.len() as u8);
+        data.push(instruction.data.len() as u8);
+
         data.extend_from_slice(&instruction.data);
         accounts.extend_from_slice(&instruction.accounts);
     }
+
     Ok(Instruction {
         program_id: spl_token::ID,
         data,
@@ -102,7 +97,6 @@ async fn batch(token_program: Pubkey) {
     let owner_a = Keypair::new();
     let owner_b = Keypair::new();
     let owner_a_ta_a = Keypair::new();
-    let owner_a_ta_b = Keypair::new();
     let owner_b_ta_a = Keypair::new();
 
     let create_owner_a_ta_a = system_instruction::create_account(
@@ -123,13 +117,6 @@ async fn batch(token_program: Pubkey) {
         &token_program,
         &owner_a_ta_a.pubkey(),
         &mint_a.pubkey(),
-        &owner_a.pubkey(),
-    )
-    .unwrap();
-    let intialize_owner_a_ta_b = spl_token::instruction::initialize_account3(
-        &token_program,
-        &owner_a_ta_b.pubkey(),
-        &mint_b.pubkey(),
         &owner_a.pubkey(),
     )
     .unwrap();

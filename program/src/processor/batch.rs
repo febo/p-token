@@ -13,13 +13,9 @@ pub fn process_batch(mut accounts: &[AccountInfo], mut instruction_data: &[u8]) 
     loop {
         // Validates the instruction data and accounts offset.
 
-        match instruction_data.len() {
-            0 => break,
-            n if n < IX_HEADER_SIZE => {
-                // The instruction data must have at least two bytes.
-                return Err(ProgramError::InvalidInstructionData);
-            }
-            _ => (),
+        if instruction_data.len() < IX_HEADER_SIZE {
+            // The instruction data must have at least two bytes.
+            return Err(ProgramError::InvalidInstructionData);
         }
 
         // SAFETY: The instruction data is guaranteed to have at least two bytes.
@@ -41,6 +37,11 @@ pub fn process_batch(mut accounts: &[AccountInfo], mut instruction_data: &[u8]) 
             &accounts[..expected_accounts],
             &instruction_data[IX_HEADER_SIZE..data_offset],
         )?;
+
+        if data_offset == instruction_data.len() {
+            // The batch is complete.
+            break;
+        }
 
         accounts = &accounts[expected_accounts..];
         instruction_data = &instruction_data[data_offset..];
