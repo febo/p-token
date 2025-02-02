@@ -5,7 +5,7 @@ use pinocchio::{program_error::ProgramError, pubkey::Pubkey};
 use crate::error::TokenError;
 
 /// Instructions supported by the token program.
-#[repr(C)]
+#[repr(C, u8)]
 #[derive(Clone, Debug, PartialEq)]
 pub enum TokenInstruction<'a> {
     /// Initializes a new mint and optionally deposits all the newly minted
@@ -477,6 +477,21 @@ pub enum TokenInstruction<'a> {
         /// The ui_amount of tokens to reformat.
         ui_amount: &'a str,
     },
+
+    /// Executes a batch of instructions. The instructions to be executed are specified
+    /// in sequence on the instruction data. Each instruction provides:
+    /// - `u8`: number of accounts
+    /// - `u8`: instruction data length (includes the discriminator)
+    /// - `u8`: instruction discriminator
+    /// - `[u8]`: instruction data
+    ///
+    /// Accounts follow a similar pattern, where accounts for each instruction are
+    /// specified in sequence. Therefore, the number of accounts expected by this
+    /// instruction is variable – i.e., it depends on the instructions provided.
+    ///
+    /// Both the number of accountsa and instruction data length are used to identify
+    /// the slice of accounts and instruction data for each instruction.
+    Batch = 255,
     // Any new variants also need to be added to program-2022 `TokenInstruction`, so that the
     // latter remains a superset of this instruction set. New variants also need to be added to
     // token/js/src/instructions/types.ts to maintain @solana/spl-token compatibility
