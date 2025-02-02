@@ -1,6 +1,6 @@
 use pinocchio::{account_info::AccountInfo, program_error::ProgramError, ProgramResult};
 
-use crate::entrypoint::process_instruction;
+use crate::entrypoint::inner_process_instruction;
 
 /// The size of the batch instruction header.
 ///
@@ -18,11 +18,12 @@ pub fn process_batch(mut accounts: &[AccountInfo], mut instruction_data: &[u8]) 
             return Err(ProgramError::InvalidInstructionData);
         }
 
-        // SAFETY: The instruction data is guaranteed to have at least two bytes.
+        // SAFETY: The instruction data is guaranteed to have at least two bytes (header)
+        // + one byte (discriminator).
         let expected_accounts = unsafe { *instruction_data.get_unchecked(0) as usize };
         let data_offset = IX_HEADER_SIZE + unsafe { *instruction_data.get_unchecked(1) as usize };
 
-        if instruction_data.len() < data_offset {
+        if instruction_data.len() < data_offset || data_offset == 0 {
             return Err(ProgramError::InvalidInstructionData);
         }
 
@@ -32,10 +33,12 @@ pub fn process_batch(mut accounts: &[AccountInfo], mut instruction_data: &[u8]) 
 
         // Process the instruction.
 
-        process_instruction(
-            &token_interface::program::ID,
-            &accounts[..expected_accounts],
-            &instruction_data[IX_HEADER_SIZE..data_offset],
+        // SAFETY: The instruction data and accounts lengths are already validated so all
+        // the slices are guaranteed to be valid.
+        inner_process_instruction(
+            unsafe { accounts.get_unchecked(..expected_accounts) },
+            unsafe { instruction_data.get_unchecked(IX_HEADER_SIZE + 1..data_offset) },
+            unsafe { *instruction_data.get_unchecked(IX_HEADER_SIZE) },
         )?;
 
         if data_offset == instruction_data.len() {

@@ -1,4 +1,3 @@
-use batch::process_batch;
 use pinocchio::{
     account_info::AccountInfo, default_panic_handler, no_allocator, program_entrypoint,
     program_error::ProgramError, pubkey::Pubkey, ProgramResult,
@@ -12,23 +11,6 @@ no_allocator!();
 // Use the default panic handler.
 default_panic_handler!();
 
-/// Process an instruction.
-///
-/// The processor of the token program is divided into two parts to reduce the overhead
-/// of having a large `match` statement. The first part of the processor handles the
-/// most common instructions, while the second part handles the remaining instructions.
-/// The rationale is to reduce the overhead of making multiple comparisons for popular
-/// instructions.
-///
-/// Instructions on the first part of the processor:
-///
-/// - `0`: `InitializeMint`
-/// - `3`:  `Transfer`
-/// - `7`:  `MintTo`
-/// - `9`:  `CloseAccount`
-/// - `18`: `InitializeAccount3`
-/// - `20`: `InitializeMint2`
-/// - `255`: `Batch`
 #[inline(always)]
 pub fn process_instruction(
     _program_id: &Pubkey,
@@ -39,7 +21,42 @@ pub fn process_instruction(
         return Err(ProgramError::InvalidInstructionData);
     };
 
-    match *discriminator {
+    if *discriminator == 255 {
+        // 255 - Batch
+        #[cfg(feature = "logging")]
+        pinocchio::msg!("Instruction: Batch");
+
+        return process_batch(accounts, instruction_data);
+    }
+
+    inner_process_instruction(accounts, instruction_data, *discriminator)
+}
+
+/// Process an instruction.
+///
+/// The processor of the token program is divided into two parts to reduce the overhead
+/// of having a large `match` statement. The first part of the processor handles the
+/// most common instructions, while the second part handles the remaining instructions.
+/// The rationale is to reduce the overhead of making multiple comparisons for popular
+/// instructions.
+///
+/// Instructions on the first part of the processor:
+///
+/// -  `0`: `InitializeMint`
+/// -  `1`: `InitializeAccount`
+/// -  `3`: `Transfer`
+/// -  `7`: `MintTo`
+/// -  `9`: `CloseAccount`
+/// - `18`: `InitializeAccount2`
+/// - `18`: `InitializeAccount3`
+/// - `20`: `InitializeMint2`
+#[inline(always)]
+pub fn inner_process_instruction(
+    accounts: &[AccountInfo],
+    instruction_data: &[u8],
+    discriminator: u8,
+) -> ProgramResult {
+    match discriminator {
         // 0 - InitializeMint
         0 => {
             #[cfg(feature = "logging")]
@@ -47,7 +64,13 @@ pub fn process_instruction(
 
             process_initialize_mint(accounts, instruction_data, true)
         }
+        // 1 - InitializeAccount
+        1 => {
+            #[cfg(feature = "logging")]
+            pinocchio::msg!("Instruction: InitializeAccount");
 
+            process_initialize_account(accounts)
+        }
         // 3 - Transfer
         3 => {
             #[cfg(feature = "logging")]
@@ -69,6 +92,13 @@ pub fn process_instruction(
 
             process_close_account(accounts)
         }
+        // 16 - InitializeAccount2
+        16 => {
+            #[cfg(feature = "logging")]
+            pinocchio::msg!("Instruction: InitializeAccount2");
+
+            process_initialize_account2(accounts, instruction_data)
+        }
         // 18 - InitializeAccount3
         18 => {
             #[cfg(feature = "logging")]
@@ -83,14 +113,7 @@ pub fn process_instruction(
 
             process_initialize_mint2(accounts, instruction_data)
         }
-        // 255 - Batch
-        255 => {
-            #[cfg(feature = "logging")]
-            pinocchio::msg!("Instruction: Batch");
-
-            process_batch(accounts, instruction_data)
-        }
-        _ => process_remaining_instruction(accounts, instruction_data, *discriminator),
+        _ => inner_process_remaining_instruction(accounts, instruction_data, discriminator),
     }
 }
 
@@ -99,19 +122,12 @@ pub fn process_instruction(
 /// This function is called by the `process_instruction` function if the discriminator
 /// does not match any of the common instructions. This function is used to reduce the
 /// overhead of having a large `match` statement in the `process_instruction` function.
-fn process_remaining_instruction(
+fn inner_process_remaining_instruction(
     accounts: &[AccountInfo],
     instruction_data: &[u8],
     discriminator: u8,
 ) -> ProgramResult {
     match discriminator {
-        // 1 - InitializeAccount
-        1 => {
-            #[cfg(feature = "logging")]
-            pinocchio::msg!("Instruction: InitializeAccount");
-
-            process_initialize_account(accounts)
-        }
         // 2 - InitializeMultisig
         2 => {
             #[cfg(feature = "logging")]
@@ -188,13 +204,6 @@ fn process_remaining_instruction(
             pinocchio::msg!("Instruction: BurnChecked");
 
             process_burn_checked(accounts, instruction_data)
-        }
-        // 16 - InitializeAccount2
-        16 => {
-            #[cfg(feature = "logging")]
-            pinocchio::msg!("Instruction: InitializeAccount2");
-
-            process_initialize_account2(accounts, instruction_data)
         }
         // 17 - SyncNative
         17 => {
