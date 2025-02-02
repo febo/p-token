@@ -78,7 +78,7 @@ pub fn process_initialize_account(
         };
     }
 
-    account.state = AccountState::Initialized;
+    account.state = AccountState::Initialized as u8;
     account.mint = *mint_info.key();
     account.owner = *owner;
 
