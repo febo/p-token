@@ -1,53 +1,94 @@
+use core::mem::MaybeUninit;
+
 use pinocchio::{account_info::AccountInfo, program_error::ProgramError, ProgramResult};
 
 use crate::entrypoint::inner_process_instruction;
 
-/// The size of the batch instruction header.
-///
-/// The header of each instruction consists of two `u8` values:
-///  * number of the accounts
-///  * length of the instruction data
-const IX_HEADER_SIZE: usize = 2;
+macro_rules! write_account {
+    ( $index_source:expr, $source:ident, $index_target:literal, $target:ident ) => {
+        // TODO: need to validate that the indices are within bounds.
+        unsafe {
+            $target
+                .get_unchecked_mut($index_target)
+                .write($source.get_unchecked($index_source).clone())
+        }
+    };
+}
 
-pub fn process_batch(mut accounts: &[AccountInfo], mut instruction_data: &[u8]) -> ProgramResult {
+macro_rules! fill_accounts {
+    ( $indices:ident, $accounts:ident, $instruction_accounts:ident ) => {
+        match $indices.len() {
+            1 => {
+                write_account!($indices[0] as usize, $accounts, 0, $instruction_accounts);
+            }
+            2 => {
+                write_account!($indices[0] as usize, $accounts, 0, $instruction_accounts);
+                write_account!($indices[1] as usize, $accounts, 1, $instruction_accounts);
+            }
+            3 => {
+                write_account!($indices[0] as usize, $accounts, 0, $instruction_accounts);
+                write_account!($indices[1] as usize, $accounts, 1, $instruction_accounts);
+                write_account!($indices[2] as usize, $accounts, 2, $instruction_accounts);
+            }
+            4 => {
+                write_account!($indices[0] as usize, $accounts, 0, $instruction_accounts);
+                write_account!($indices[1] as usize, $accounts, 1, $instruction_accounts);
+                write_account!($indices[2] as usize, $accounts, 2, $instruction_accounts);
+                write_account!($indices[3] as usize, $accounts, 3, $instruction_accounts);
+            }
+            // TODO: Add more cases up to 15.
+            _ => return Err(ProgramError::NotEnoughAccountKeys),
+        }
+    };
+}
+
+pub fn process_batch(accounts: &[AccountInfo], mut instruction_data: &[u8]) -> ProgramResult {
+    const UNINIT_ACCOUNT: MaybeUninit<AccountInfo> = MaybeUninit::<AccountInfo>::uninit();
+    // Instructions take at most 15 accounts.
+    let mut instruction_accounts: [MaybeUninit<AccountInfo>; 15] = [UNINIT_ACCOUNT; 15];
+
+    if instruction_data.is_empty() {
+        return Err(ProgramError::InvalidInstructionData);
+    }
+
     loop {
-        // Validates the instruction data and accounts offset.
-
-        if instruction_data.len() < IX_HEADER_SIZE {
-            // The instruction data must have at least two bytes.
-            return Err(ProgramError::InvalidInstructionData);
-        }
-
-        // SAFETY: The instruction data is guaranteed to have at least two bytes (header)
-        // + one byte (discriminator).
         let expected_accounts = unsafe { *instruction_data.get_unchecked(0) as usize };
-        let data_offset = IX_HEADER_SIZE + unsafe { *instruction_data.get_unchecked(1) as usize };
+        // There must be at least:
+        //   - 1 byte for the number of accounts.
+        //   - `expected_accounts` bytes for instruction accounts indices.
+        //   - 1 byte for the length of the instruction data.
+        let data_offset = expected_accounts + 2;
 
-        if instruction_data.len() < data_offset || data_offset == 0 {
+        if instruction_data.len() < data_offset {
             return Err(ProgramError::InvalidInstructionData);
         }
 
-        if accounts.len() < expected_accounts {
-            return Err(ProgramError::NotEnoughAccountKeys);
-        }
+        let indices = unsafe { instruction_data.get_unchecked(1..1 + expected_accounts) };
+        fill_accounts!(indices, accounts, instruction_accounts);
 
-        // Process the instruction.
+        let expected_data =
+            data_offset + unsafe { *instruction_data.get_unchecked(data_offset - 1) as usize };
+
+        if instruction_data.len() < expected_data || expected_data == 0 {
+            return Err(ProgramError::InvalidInstructionData);
+        }
 
         // SAFETY: The instruction data and accounts lengths are already validated so all
         // the slices are guaranteed to be valid.
         inner_process_instruction(
-            unsafe { accounts.get_unchecked(..expected_accounts) },
-            unsafe { instruction_data.get_unchecked(IX_HEADER_SIZE + 1..data_offset) },
-            unsafe { *instruction_data.get_unchecked(IX_HEADER_SIZE) },
+            unsafe {
+                core::slice::from_raw_parts(instruction_accounts.as_ptr() as _, expected_accounts)
+            },
+            unsafe { instruction_data.get_unchecked(data_offset + 1..expected_data) },
+            unsafe { *instruction_data.get_unchecked(data_offset) },
         )?;
 
-        if data_offset == instruction_data.len() {
+        if expected_data == instruction_data.len() {
             // The batch is complete.
             break;
         }
 
-        accounts = &accounts[expected_accounts..];
-        instruction_data = &instruction_data[data_offset..];
+        instruction_data = &instruction_data[expected_data..];
     }
 
     Ok(())
