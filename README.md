@@ -1,3 +1,6 @@
+>[!IMPORTANT]
+> `p-token` codebase moved to [SPL Token repository](https://github.com/solana-program/token).
+
 <h1 align="center">
   <code>p-token</code>
 </h1>
@@ -27,7 +30,7 @@ This repository contains a **proof-of-concept** of a reimplementation of the SPL
 - [x] Account and Mint
 - [x] Instructions
 - [x] Basic instruction tests
-- [ ] Existing SPL Token tests
+- [x] Existing SPL Token tests
 
 ## Compute Units
 
