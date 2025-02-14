@@ -26,7 +26,7 @@ pub struct Account {
     delegate: COption<Pubkey>,
 
     /// The account's state.
-    pub state: AccountState,
+    pub state: u8,
 
     /// Indicates whether this account represents a native token or not.
     is_native: [u8; 4],
@@ -131,7 +131,7 @@ impl Account {
 
     #[inline(always)]
     pub fn is_frozen(&self) -> bool {
-        self.state == AccountState::Frozen
+        self.state == AccountState::Frozen as u8
     }
 
     #[inline(always)]
@@ -147,6 +147,6 @@ impl RawType for Account {
 impl Initializable for Account {
     #[inline(always)]
     fn is_initialized(&self) -> bool {
-        self.state != AccountState::Uninitialized
+        self.state != AccountState::Uninitialized as u8
     }
 }

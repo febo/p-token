@@ -37,9 +37,9 @@ pub fn process_toggle_account_state(accounts: &[AccountInfo], freeze: bool) -> P
     }?;
 
     source_account.state = if freeze {
-        AccountState::Frozen
+        AccountState::Frozen as u8
     } else {
-        AccountState::Initialized
+        AccountState::Initialized as u8
     };
 
     Ok(())
